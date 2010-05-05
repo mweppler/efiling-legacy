@@ -9,7 +9,7 @@ public class DocumentType implements IsSerializable {
     private String documentTypeAbbr;
     
     /**
-     * CONSTRUCTOR: DOCUMENT TYPE
+     * CONSTRUCTOR: DOCUMENT TYPE (ZERO ARGUMENT IMPLEMENTATION- NEEDED BY GWT)
      */
     public DocumentType() {
     }

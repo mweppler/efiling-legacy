@@ -8,7 +8,7 @@ public class FileCabinet implements IsSerializable {
     private String cabinetName;
     
     /**
-     * CONSTRUCTOR: FILE CABINET
+     * CONSTRUCTOR: FILE CABINET (ZERO ARGUMENT IMPLEMENTATION- NEEDED BY GWT)
      */
     public FileCabinet() {
     }

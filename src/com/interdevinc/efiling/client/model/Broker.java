@@ -9,7 +9,7 @@ public class Broker implements IsSerializable {
     private String lastName;
     
     /**
-     * CONSTRUCTOR: BROKER
+     * CONSTRUCTOR: BROKER (ZERO ARGUMENT IMPLEMENTATION- NEEDED BY GWT)
      */
     public Broker() {
     }

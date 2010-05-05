@@ -13,7 +13,7 @@ public class ScannedDocument implements IsSerializable {
     private String uploadID;
     
     /**
-     * CONSTRUCTOR: SCANNED DOCUMENT
+     * CONSTRUCTOR: SCANNED DOCUMENT (ZERO ARGUMENT IMPLEMENTATION- NEEDED BY GWT)
      */
     public ScannedDocument() {
     }

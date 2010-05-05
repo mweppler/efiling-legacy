@@ -8,7 +8,7 @@ public class AccessControls implements IsSerializable {
     private String[] cabinetID;
     
     /**
-     * CONSTRUCTOR: ACCESS CONTROLS
+     * CONSTRUCTOR: ACCESS CONTROLS (ZERO ARGUMENT IMPLEMENTATION- NEEDED BY GWT)
      */
     public AccessControls() {
     }

@@ -9,7 +9,7 @@ public class Client implements IsSerializable {
     private String lastName;
     
     /**
-     * CONSTRUCTOR: CLIENT
+     * CONSTRUCTOR: CLIENT (ZERO ARGUMENT IMPLEMENTATION- NEEDED BY GWT)
      */
     public Client() {
     }

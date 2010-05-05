@@ -10,7 +10,7 @@ public class AuthenticatedUser implements IsSerializable {
     private String username;
     
     /**
-     * CONSTRUCTOR: AUTHENTICATED USER
+     * CONSTRUCTOR: AUTHENTICATED USER (ZERO ARGUMENT IMPLEMENTATION- NEEDED BY GWT)
      */
     public AuthenticatedUser() {
     }
@@ -18,10 +18,9 @@ public class AuthenticatedUser implements IsSerializable {
     /**
      * CONSTRUCTOR: AUTHENTICATED USER
      */
-    public AuthenticatedUser(String uid, String uname, String pass, String email) {
+    public AuthenticatedUser(String uid, String uname, String email) {
 	setUserID(uid);
 	setUsername(uname);
-	setPassword(pass);
 	setEmailAddress(email);
     }
 
