@@ -6,17 +6,25 @@ public class ScannedDocument implements IsSerializable {
 
     private String clientAccountNumber;
     private String documentTypeAbbr;
+    private String fileCabinet;
     private String fileName;
     private String fileSize;
     private String uploadDate;
     private String uploadID;
     
+    /**
+     * CONSTRUCTOR: SCANNED DOCUMENT
+     */
     public ScannedDocument() {
     }
     
-    public ScannedDocument(String can, String dta, String fname, String fsize, String udate, String uid) {
+    /**
+     * CONSTRUCTOR: SCANNED DOCUMENT
+     */
+    public ScannedDocument(String can, String dta, String fCabinet, String fname, String fsize, String udate, String uid) {
 	setClientAccountNumber(can);
 	setDocumentTypeAbbr(dta);
+	setFileCabinet(fCabinet);
 	setFileName(fname);
 	setFileSize(fsize);
 	setUploadDate(udate);
@@ -37,6 +45,13 @@ public class ScannedDocument implements IsSerializable {
         return documentTypeAbbr;
     }
 
+    /**
+     * @return the fileCabinet
+     */
+    public String getFileCabinet() {
+	return fileCabinet;
+    }
+    
     /**
      * @return the fileName
      */
@@ -79,6 +94,13 @@ public class ScannedDocument implements IsSerializable {
         documentTypeAbbr = dta;
     }
 
+    /**
+     * @param fCabinet the fileCabinet to set
+     */
+    public void setFileCabinet(String fCabinet) {
+	fileCabinet = fCabinet;
+    }
+    
     /**
      * @param fname the fileName to set
      */

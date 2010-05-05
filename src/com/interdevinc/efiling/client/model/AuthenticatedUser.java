@@ -9,9 +9,15 @@ public class AuthenticatedUser implements IsSerializable {
     private String userID;
     private String username;
     
+    /**
+     * CONSTRUCTOR: AUTHENTICATED USER
+     */
     public AuthenticatedUser() {
     }
     
+    /**
+     * CONSTRUCTOR: AUTHENTICATED USER
+     */
     public AuthenticatedUser(String uid, String uname, String pass, String email) {
 	setUserID(uid);
 	setUsername(uname);
