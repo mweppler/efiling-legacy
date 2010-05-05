@@ -8,10 +8,10 @@ import java.sql.Statement;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.interdevinc.efiling.client.model.AuthenticatedUser;
-import com.interdevinc.efiling.client.processor.AuthenticateUser;
+import com.interdevinc.efiling.client.processor.AuthenticationService;
 
 
-public class AuthenticateUserImpl extends RemoteServiceServlet implements AuthenticateUser{
+public class AuthenticationServiceImpl extends RemoteServiceServlet implements AuthenticationService{
 
     private static final long serialVersionUID = 1L;
 
@@ -19,10 +19,14 @@ public class AuthenticateUserImpl extends RemoteServiceServlet implements Authen
     private final String username="eamAppAuth";
     private final String password="XVSxQaTeFhNpHLhn";
 
+    private Connection connection;
+    private Statement statement;
+    private ResultSet results;
+    
     /**
-     * CONSTRUCTOR: AUTHENTICATE USER IMPL (ZERO ARGUMENT IMPLEMENTATION- NEEDED BY GWT)
+     * CONSTRUCTOR: AUTHENTICATION SERVICE IMPL (ZERO ARGUMENT IMPLEMENTATION- NEEDED BY GWT)
      */
-    public AuthenticateUserImpl() {
+    public AuthenticationServiceImpl() {
 	
     }
     
@@ -31,7 +35,7 @@ public class AuthenticateUserImpl extends RemoteServiceServlet implements Authen
      */
     public AuthenticatedUser authenticateUser(String u, String p) {
 
-	/*
+	
 	//user instance
 	AuthenticatedUser authenticatedUser=null;
 
@@ -42,21 +46,19 @@ public class AuthenticateUserImpl extends RemoteServiceServlet implements Authen
 	//System.out.println(userQuery);
 
 	try{
-	    //dynamic class load
-	    Class.forName("com.mysql.jdbc.Driver").newInstance();
-
+	    
 	    //init connection and statement
-	    Connection connection=DriverManager.getConnection(url,username,password);
-	    Statement statement=connection.createStatement();
+	    connection = getConnection();
+	    statement = connection.createStatement();
 
 	    //execute statement and retrieve resultSet
 	    statement.execute(userQuery);
-	    ResultSet results=statement.getResultSet();
+	    results = statement.getResultSet();
 
 	    if(results!=null){
 		//if a single result exists
 		if(results.next()){
-		    System.out.println("creating user...");
+		    System.out.println("authenticating user...");
 		    //init authenticated user
 		    authenticatedUser = new AuthenticatedUser(results.getString(1), results.getString(2), results.getString(3));
 		}else{
@@ -80,8 +82,8 @@ public class AuthenticateUserImpl extends RemoteServiceServlet implements Authen
 	}
 
 	return authenticatedUser;
-	*/
-	return new AuthenticatedUser("0711","mweppler", "mweppler@interdevinc.com");
+	
+	//return new AuthenticatedUser("0711","mweppler", "mweppler@interdevinc.com");
     }
     
     private void retrieveAccessControls(String uid) {

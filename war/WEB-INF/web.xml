@@ -7,6 +7,16 @@
   
   <!-- Servlets -->
   
+  <!-- Login Servlet -->
+    <servlet>
+        <servlet-name>authenticationServiceImpl</servlet-name>
+        <servlet-class>com.interdevinc.efiling.server.processor.AuthenticationServiceImpl</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>authenticationServiceImpl</servlet-name>
+        <url-pattern>/efiling/authentication</url-pattern>
+    </servlet-mapping>
+    
   <!-- Default page to serve -->
   <welcome-file-list>
     <welcome-file>efiling.html</welcome-file>

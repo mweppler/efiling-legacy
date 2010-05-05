@@ -1,23 +1,84 @@
 package com.interdevinc.efiling.client;
 
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.FileUpload;
-import com.google.gwt.user.client.ui.FormHandler;
-import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.FormSubmitCompleteEvent;
-import com.google.gwt.user.client.ui.FormSubmitEvent;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
+import com.interdevinc.efiling.client.model.AuthenticatedUser;
+import com.interdevinc.efiling.client.view.LoginManager;
 
-public class Efiling implements EntryPoint {
+public class Efiling implements EntryPoint, ClickHandler, ValueChangeHandler<String> {
  
-    public void onModuleLoad() {
+    private LoginManager loginManager;
 
+    private AuthenticatedUser authenticatedUser;
+    
+    public void onModuleLoad() {
+	initializeHistoryState();
     }
+    
+    /**
+     * METHOD: ON HISTORY CHANGE
+     * @param token - String value of the view.
+     */
+    public void onHistoryChange(String token){
+	if (token.equals("LoginManager")) {
+	    loadLoginManagerView();
+	} else if (token.equals("UserAuthenticated")) {
+	    loadUserDetails();
+	}
+    }
+    
+    /**
+     * METHOD: ON VALUE CHANGE
+     * @param event - 
+     */
+    public void onValueChange(ValueChangeEvent<String> event) {
+	onHistoryChange(event.getValue());
+    }
+    
+    /**
+     * METHOD:	INIT HISTORY STATE	 */
+    public void initializeHistoryState(){
+	// Add the History Handler
+	History.addValueChangeHandler(this);
+
+	// Test if any tokens have been passed at startup
+	String token = History.getToken();
+
+	if(token.length() == 0){
+	    onHistoryChange("LoginManager");
+	} else {
+	    onHistoryChange(token);
+	}
+    }
+    
+    /**
+     * METHOD: LOAD LOGIN MANAGER VIEW
+     */
+    private void loadLoginManagerView() {
+	RootPanel.get("main-container").clear();
+	loginManager = new LoginManager();
+	RootPanel.get("main-container").add(loginManager.showView());
+    }
+
+    /**
+     * METHOD: LOAD USER DETAILS
+     */
+    private void loadUserDetails() {
+	RootPanel.get("main-container").clear();
+	authenticatedUser = loginManager.getAuthenticatedUser();
+	Window.alert("UserID: " + authenticatedUser.getUserID() + "\nUsername: " + authenticatedUser.getUsername() + "\nEmail: " + authenticatedUser.getEmailAddress());
+    }
+    
+    @Override
+    public void onClick(ClickEvent event) {
+	// TODO Auto-generated method stub
+	
+    }
+    
 }
