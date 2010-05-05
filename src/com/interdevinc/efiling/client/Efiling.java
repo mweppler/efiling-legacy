@@ -8,6 +8,7 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.interdevinc.efiling.client.model.AccessControl;
 import com.interdevinc.efiling.client.model.AuthenticatedUser;
 import com.interdevinc.efiling.client.view.LoginManager;
 
@@ -72,7 +73,11 @@ public class Efiling implements EntryPoint, ClickHandler, ValueChangeHandler<Str
     private void loadUserDetails() {
 	RootPanel.get("main-container").clear();
 	authenticatedUser = loginManager.getAuthenticatedUser();
-	Window.alert("UserID: " + authenticatedUser.getUserID() + "\nUsername: " + authenticatedUser.getUsername() + "\nEmail: " + authenticatedUser.getEmailAddress());
+	StringBuilder details = new StringBuilder("UserID: " + authenticatedUser.getUserID() + "\nUsername: " + authenticatedUser.getUsername() + "\nEmail: " + authenticatedUser.getEmailAddress());
+	for (AccessControl ac : authenticatedUser.getAccessControl()) {
+	    details = details.append("\nRoleID: " + ac.getRoleID() + "\tResource: " + ac.getResourceID());
+	}
+	Window.alert(details.toString());
     }
     
     @Override

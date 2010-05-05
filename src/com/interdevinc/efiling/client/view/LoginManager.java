@@ -191,7 +191,7 @@ public class LoginManager implements ClickHandler,KeyPressHandler {
 	 * METHOD:	ON SUCCESS
 	 * @param user - valid user or NULL		 */
 	public void onSuccess(AuthenticatedUser user){
-	    if(user!=null){
+	    if(user != null){
 		setAuthenticatedUser(user);
 		History.newItem("UserAuthenticated");
 	    }else{

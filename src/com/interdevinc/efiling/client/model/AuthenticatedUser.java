@@ -1,5 +1,7 @@
 package com.interdevinc.efiling.client.model;
 
+import java.util.ArrayList;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class AuthenticatedUser implements IsSerializable {
@@ -8,6 +10,7 @@ public class AuthenticatedUser implements IsSerializable {
     private String password;
     private String userID;
     private String username;
+    private ArrayList<AccessControl> accessControl;
     
     /**
      * CONSTRUCTOR: AUTHENTICATED USER (ZERO ARGUMENT IMPLEMENTATION- NEEDED BY GWT)
@@ -24,6 +27,13 @@ public class AuthenticatedUser implements IsSerializable {
 	setEmailAddress(email);
     }
 
+    /**
+     * @return accessControl
+     */
+    public ArrayList<AccessControl> getAccessControl() {
+	return accessControl;
+    }
+    
     /**
      * @return the userID
      */
@@ -52,6 +62,13 @@ public class AuthenticatedUser implements IsSerializable {
         return emailAddress;
     }
 
+    /**
+     * @param ac the accessControl to set
+     */
+    public void setAccessControl(ArrayList<AccessControl> ac) {
+	accessControl = ac;
+    }
+    
     /**
      * @param uid the userID to set
      */

@@ -5,8 +5,10 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+import com.interdevinc.efiling.client.model.AccessControl;
 import com.interdevinc.efiling.client.model.AuthenticatedUser;
 import com.interdevinc.efiling.client.processor.AuthenticationService;
 
@@ -22,31 +24,42 @@ public class AuthenticationServiceImpl extends RemoteServiceServlet implements A
     private Connection connection;
     private Statement statement;
     private ResultSet results;
-    
+
+    private AuthenticatedUser authenticatedUser;
+
     /**
      * CONSTRUCTOR: AUTHENTICATION SERVICE IMPL (ZERO ARGUMENT IMPLEMENTATION- NEEDED BY GWT)
      */
     public AuthenticationServiceImpl() {
-	
     }
-    
+
     /**
      * METHOD: AUTHENTICATE USER
      */
     public AuthenticatedUser authenticateUser(String u, String p) {
 
+	retrieveUserDetails(u, p);
 	
-	//user instance
-	AuthenticatedUser authenticatedUser=null;
+	if (authenticatedUser != null) {
+	    retrieveAccessControl();
+	}
+
+	return authenticatedUser;
+
+    }
+
+    /**
+     * METHOD: RETRIEVE USER DETAILS
+     * @param u username, p password
+     * Validates username/password, creates an AuthenticatedUser instance
+     */
+    private void retrieveUserDetails(String u, String p) {
 
 	//query statement
 	final String userQuery = "SELECT userid, username, emailAddress FROM users WHERE (username='"+u+"' AND password='"+p+"')";
 
-	//visual debug
-	//System.out.println(userQuery);
-
 	try{
-	    
+
 	    //init connection and statement
 	    connection = getConnection();
 	    statement = connection.createStatement();
@@ -58,11 +71,10 @@ public class AuthenticationServiceImpl extends RemoteServiceServlet implements A
 	    if(results!=null){
 		//if a single result exists
 		if(results.next()){
-		    System.out.println("authenticating user...");
 		    //init authenticated user
 		    authenticatedUser = new AuthenticatedUser(results.getString(1), results.getString(2), results.getString(3));
 		}else{
-		    return null;
+		    authenticatedUser = null;
 		}
 	    }
 
@@ -81,18 +93,54 @@ public class AuthenticationServiceImpl extends RemoteServiceServlet implements A
 	    e.printStackTrace();
 	}
 
-	return authenticatedUser;
-	
-	//return new AuthenticatedUser("0711","mweppler", "mweppler@interdevinc.com");
     }
-    
-    private void retrieveAccessControls(String uid) {
+
+    /**
+     * METHOD: RETRIEVE ACCESS CONTROL
+     * Creates AccessControl instances, added them to the authenticatedUser instance
+     */
+    private void retrieveAccessControl() {
+
+	ArrayList<AccessControl> accessControl = new ArrayList<AccessControl>();
 	
-	final String accessQuery = "SELECT roles.rolename, resources.resourcename FROM access LEFT JOIN roles ON access.roleid=roles.roleid LEFT JOIN resources ON access.resourceid=resources.resourceid WHERE userid='"+uid+"'";
+	//query statement
+	final String accessQuery = "SELECT roles.rolename, resources.resourcename FROM access LEFT JOIN roles ON access.roleid=roles.roleid LEFT JOIN resources ON access.resourceid=resources.resourceid WHERE userid='"+authenticatedUser.getUserID()+"' ORDER BY resources.resourceid ASC";
+
+	try{
+
+	    //init connection and statement
+	    connection = getConnection();
+	    statement = connection.createStatement();
+
+	    //execute statement and retrieve resultSet
+	    statement.execute(accessQuery);
+	    results = statement.getResultSet();
+
+	    if(results!=null){
+		while (results.next()) {
+		    accessControl.add(new AccessControl(authenticatedUser.getUserID(), results.getString(1), results.getString(2)));
+		}
+	    }
+
+	    //close all processing objects
+	    results.close();
+	    statement.close();
+	    connection.close();			
+
+	}catch (InstantiationException e){
+	    e.printStackTrace();
+	}catch (IllegalAccessException e){
+	    e.printStackTrace();
+	}catch (ClassNotFoundException e){
+	    e.printStackTrace();
+	}catch (SQLException e){
+	    e.printStackTrace();
+	}
 	
-	
+	authenticatedUser.setAccessControl(accessControl);
+
     }
-    
+
     /**
      * METHOD: GET CONNECTION
      * @return
@@ -104,5 +152,5 @@ public class AuthenticationServiceImpl extends RemoteServiceServlet implements A
 	Class.forName("com.mysql.jdbc.Driver").newInstance();
 	return DriverManager.getConnection(url,username,password);
     }
-    
+
 }
