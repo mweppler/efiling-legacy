@@ -127,12 +127,12 @@ public class LoginManager implements ClickHandler,KeyPressHandler {
 	nameBox = new TextBox();
 	nameBox.setWidth("100px");		
 	nameBox.addKeyPressHandler(this);
-	nameBox.setText("mweppler");
+	nameBox.setText("developer");
 
 	passBox = new PasswordTextBox();		
 	passBox.setWidth("100px");
 	passBox.addKeyPressHandler(this);
-	passBox.setText("mweppler");
+	passBox.setText("d3V3l0P3R");
 
 	//init submit button
 	submit = new Button("Login");

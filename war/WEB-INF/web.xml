@@ -7,6 +7,16 @@
   
   <!-- Servlets -->
   
+  <!-- File Cabinet Servlet -->
+    <servlet>
+        <servlet-name>fileCabinetServiceImpl</servlet-name>
+        <servlet-class>com.interdevinc.efiling.server.processor.FileCabinetServiceImpl</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>fileCabinetServiceImpl</servlet-name>
+        <url-pattern>/efiling/filecabinet</url-pattern>
+    </servlet-mapping>
+  
   <!-- Login Servlet -->
     <servlet>
         <servlet-name>authenticationServiceImpl</servlet-name>

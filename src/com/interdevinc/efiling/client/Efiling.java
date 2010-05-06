@@ -10,12 +10,13 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.interdevinc.efiling.client.model.AccessControl;
 import com.interdevinc.efiling.client.model.AuthenticatedUser;
+import com.interdevinc.efiling.client.view.FileCabinetSelectionView;
 import com.interdevinc.efiling.client.view.LoginManager;
 
 public class Efiling implements EntryPoint, ClickHandler, ValueChangeHandler<String> {
  
     private LoginManager loginManager;
-
+    private FileCabinetSelectionView fileCabinetView;
     private AuthenticatedUser authenticatedUser;
     
     public void onModuleLoad() {
@@ -31,6 +32,8 @@ public class Efiling implements EntryPoint, ClickHandler, ValueChangeHandler<Str
 	    loadLoginManagerView();
 	} else if (token.equals("UserAuthenticated")) {
 	    loadUserDetails();
+	} else if (token.equals("FileCabinetSelectionView")) {
+	    loadFileCabinetView();
 	}
     }
     
@@ -44,7 +47,7 @@ public class Efiling implements EntryPoint, ClickHandler, ValueChangeHandler<Str
     
     /**
      * METHOD:	INIT HISTORY STATE	 */
-    public void initializeHistoryState(){
+    private void initializeHistoryState(){
 	// Add the History Handler
 	History.addValueChangeHandler(this);
 
@@ -56,6 +59,15 @@ public class Efiling implements EntryPoint, ClickHandler, ValueChangeHandler<Str
 	} else {
 	    onHistoryChange(token);
 	}
+    }
+    
+    /**
+     * METHOD: LOAD FILE CABINET VIEW
+     */
+    private void loadFileCabinetView() {
+	RootPanel.get("main-container").clear();
+	fileCabinetView = new FileCabinetSelectionView(authenticatedUser);
+	RootPanel.get("main-container").add(fileCabinetView.showView());
     }
     
     /**
@@ -75,9 +87,10 @@ public class Efiling implements EntryPoint, ClickHandler, ValueChangeHandler<Str
 	authenticatedUser = loginManager.getAuthenticatedUser();
 	StringBuilder details = new StringBuilder("UserID: " + authenticatedUser.getUserID() + "\nUsername: " + authenticatedUser.getUsername() + "\nEmail: " + authenticatedUser.getEmailAddress());
 	for (AccessControl ac : authenticatedUser.getAccessControl()) {
-	    details = details.append("\nRoleID: " + ac.getRoleID() + "\tResource: " + ac.getResourceID());
+	    details = details.append("\nRole: " + ac.getRoleName() + "\tResource: " + ac.getResourceName());
 	}
 	Window.alert(details.toString());
+	History.newItem("FileCabinetSelectionView");
     }
     
     @Override

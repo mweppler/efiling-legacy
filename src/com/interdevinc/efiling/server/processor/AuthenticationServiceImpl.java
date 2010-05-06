@@ -12,7 +12,6 @@ import com.interdevinc.efiling.client.model.AccessControl;
 import com.interdevinc.efiling.client.model.AuthenticatedUser;
 import com.interdevinc.efiling.client.processor.AuthenticationService;
 
-
 public class AuthenticationServiceImpl extends RemoteServiceServlet implements AuthenticationService{
 
     private static final long serialVersionUID = 1L;
@@ -104,7 +103,7 @@ public class AuthenticationServiceImpl extends RemoteServiceServlet implements A
 	ArrayList<AccessControl> accessControl = new ArrayList<AccessControl>();
 	
 	//query statement
-	final String accessQuery = "SELECT roles.rolename, resources.resourcename FROM access LEFT JOIN roles ON access.roleid=roles.roleid LEFT JOIN resources ON access.resourceid=resources.resourceid WHERE userid='"+authenticatedUser.getUserID()+"' ORDER BY resources.resourceid ASC";
+	final String accessQuery = "SELECT resources.resourceid, resources.resourcename, roles.roleid, roles.rolename FROM access LEFT JOIN roles ON access.roleid=roles.roleid LEFT JOIN resources ON access.resourceid=resources.resourceid WHERE userid='"+authenticatedUser.getUserID()+"' ORDER BY resources.resourceid, roles.roleid ASC";
 
 	try{
 
@@ -118,7 +117,7 @@ public class AuthenticationServiceImpl extends RemoteServiceServlet implements A
 
 	    if(results!=null){
 		while (results.next()) {
-		    accessControl.add(new AccessControl(authenticatedUser.getUserID(), results.getString(1), results.getString(2)));
+		    accessControl.add(new AccessControl(results.getString(1), results.getString(2), results.getString(3), results.getString(4), authenticatedUser.getUserID()));
 		}
 	    }
 
