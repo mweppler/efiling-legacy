@@ -1,5 +1,7 @@
 package com.interdevinc.efiling.client.model;
 
+import java.util.ArrayList;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class FileCabinet implements IsSerializable {
@@ -7,6 +9,9 @@ public class FileCabinet implements IsSerializable {
     private String cabinetID;
     private String cabinetName;
     private String resourceID;
+    
+    private ArrayList<DocumentType> documentTypes;
+    private ArrayList<ScannedDocument> scannedDocuments;
     
     /**
      * CONSTRUCTOR: FILE CABINET (ZERO ARGUMENT IMPLEMENTATION- NEEDED BY GWT)
@@ -45,6 +50,20 @@ public class FileCabinet implements IsSerializable {
     }
     
     /**
+     * @return documentTypes
+     */
+    public ArrayList<DocumentType> getDocumentType() {
+	return documentTypes;
+    }
+    
+    /**
+     * @return scannedDocuments
+     */
+    public ArrayList<ScannedDocument> getScannedDocument() {
+	return scannedDocuments;
+    }
+    
+    /**
      * @param cid the cabinetID to set
      */
     public void setCabinetID(String cid) {
@@ -63,6 +82,20 @@ public class FileCabinet implements IsSerializable {
      */
     public void setResourceID(String rid) {
 	resourceID = rid;
+    }
+    
+    /**
+     * @param dt the documentTypes to set
+     */
+    public void setDocumentType(ArrayList<DocumentType> dt) {
+	documentTypes = dt;
+    }
+    
+    /**
+     * @param sd the scannedDocuments to set
+     */
+    public void setScannedDocument(ArrayList<ScannedDocument> sd) {
+	scannedDocuments = sd;
     }
     
 }

@@ -140,7 +140,6 @@ public class LoginManager implements ClickHandler,KeyPressHandler {
 
     }
 
-
     /**
      * METHOD: INIT REMOTE PROCEDURE WORKERS
      * This method initializes all object associated with

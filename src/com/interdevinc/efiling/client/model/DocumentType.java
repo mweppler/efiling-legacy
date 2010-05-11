@@ -4,6 +4,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class DocumentType implements IsSerializable {
 
+    private String documentTypeFullInfo;
     private String documentTypeID;
     private String documentTypeName;
     private String documentTypeAbbr;
@@ -22,6 +23,15 @@ public class DocumentType implements IsSerializable {
 	setDocumentTypeID(dtid);
 	setDocumentTypeName(dtn);
 	setDocumentTypeAbbr(dta);
+	
+	setDocumentTypeFullInfo();
+    }
+    
+    /**
+     * @return documentTypeFullInfo
+     */
+    public String getDocumentTypeFullInfo() {
+	return documentTypeFullInfo;
     }
     
     /**
@@ -43,6 +53,10 @@ public class DocumentType implements IsSerializable {
      */
     public String getDocumentTypeAbbr() {
 	return documentTypeAbbr;
+    }
+    
+    public void setDocumentTypeFullInfo() {
+	documentTypeFullInfo = "(" + documentTypeAbbr + ") - " + documentTypeName;
     }
     
     /**

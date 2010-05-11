@@ -4,11 +4,11 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class ScannedDocument implements IsSerializable {
 
-    private String clientAccountNumber;
+    private String groupedBy;
     private String documentTypeAbbr;
-    private String fileCabinet;
     private String fileName;
     private String fileSize;
+    private String fileType;
     private String uploadDate;
     private String uploadID;
     
@@ -21,21 +21,21 @@ public class ScannedDocument implements IsSerializable {
     /**
      * CONSTRUCTOR: SCANNED DOCUMENT
      */
-    public ScannedDocument(String can, String dta, String fCabinet, String fname, String fsize, String udate, String uid) {
-	setClientAccountNumber(can);
+    public ScannedDocument(String uid, String fname, String fsize, String fType, String gb, String dta, String udate) {
+	setGroupedBy(gb);
 	setDocumentTypeAbbr(dta);
-	setFileCabinet(fCabinet);
 	setFileName(fname);
 	setFileSize(fsize);
+	setFileType(fType);
 	setUploadDate(udate);
 	setUploadID(uid);
     }
 
     /**
-     * @return the clientAccountNumber
+     * @return the groupedBy
      */
-    public String getClientAccountNumber() {
-        return clientAccountNumber;
+    public String getGroupedBy() {
+        return groupedBy;
     }
 
     /**
@@ -43,13 +43,6 @@ public class ScannedDocument implements IsSerializable {
      */
     public String getDocumentTypeAbbr() {
         return documentTypeAbbr;
-    }
-
-    /**
-     * @return the fileCabinet
-     */
-    public String getFileCabinet() {
-	return fileCabinet;
     }
     
     /**
@@ -67,6 +60,13 @@ public class ScannedDocument implements IsSerializable {
     }
 
     /**
+     * @return the fileType
+     */
+    public String getFileType() {
+	return fileType;
+    }
+    
+    /**
      * @return the uploadDate
      */
     public String getUploadDate() {
@@ -81,10 +81,10 @@ public class ScannedDocument implements IsSerializable {
     }
 
     /**
-     * @param can the clientAccountNumber to set
+     * @param can the groupedBy to set
      */
-    public void setClientAccountNumber(String can) {
-        clientAccountNumber = can;
+    public void setGroupedBy(String can) {
+        groupedBy = can;
     }
 
     /**
@@ -92,13 +92,6 @@ public class ScannedDocument implements IsSerializable {
      */
     public void setDocumentTypeAbbr(String dta) {
         documentTypeAbbr = dta;
-    }
-
-    /**
-     * @param fCabinet the fileCabinet to set
-     */
-    public void setFileCabinet(String fCabinet) {
-	fileCabinet = fCabinet;
     }
     
     /**
@@ -115,6 +108,13 @@ public class ScannedDocument implements IsSerializable {
         fileSize = fsize;
     }
 
+    /**
+     * @param fType the fileType to set
+     */
+    public void setFileType(String fType) {
+	fileType = fType;
+    }
+    
     /**
      * @param udate the uploadDate to set
      */
