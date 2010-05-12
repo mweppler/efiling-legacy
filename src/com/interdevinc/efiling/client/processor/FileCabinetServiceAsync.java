@@ -13,6 +13,6 @@ public interface FileCabinetServiceAsync {
     
     public void retrieveFileCabinetContents(FileCabinet fc, AsyncCallback<FileCabinet> callback);
     
-    public void retrieveSearchComponents(AsyncCallback<SearchComponents> callback);
+    public void retrieveSearchComponents(FileCabinet fc, AsyncCallback<SearchComponents> callback);
     
 }

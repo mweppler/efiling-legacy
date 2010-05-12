@@ -102,7 +102,7 @@ public class FileCabinetView {
 	searchComponentsHandler = new SearchComponentsHandler();
 	
 	//execute authentication procedure
-	fileCabinetAsync.retrieveSearchComponents(searchComponentsHandler);
+	fileCabinetAsync.retrieveSearchComponents(fileCabinet, searchComponentsHandler);
 	    
     }
     

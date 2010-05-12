@@ -15,6 +15,6 @@ public interface FileCabinetService extends RemoteService {
     
     public FileCabinet retrieveFileCabinetContents(FileCabinet fc);
     
-    public SearchComponents retrieveSearchComponents();
+    public SearchComponents retrieveSearchComponents(FileCabinet fc);
     
 }

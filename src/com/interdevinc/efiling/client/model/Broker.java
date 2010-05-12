@@ -4,9 +4,10 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class Broker implements IsSerializable {
 
-    private String repNumber;
+    private String brokerFullInfo;
     private String firstName;
     private String lastName;
+    private String repNumber;
     
     /**
      * CONSTRUCTOR: BROKER (ZERO ARGUMENT IMPLEMENTATION- NEEDED BY GWT)
@@ -17,12 +18,21 @@ public class Broker implements IsSerializable {
     /**
      * CONSTRUCTOR: BROKER
      */
-    public Broker(String rn, String fn, String ln) {
+    public Broker(String fn, String ln, String rn) {
 	setFirstName(fn);
 	setLastName(ln);
 	setRepNumber(rn);
+	
+	setBrokerFullInfo();
     }
    
+    /**
+     * @return brokerFullInfo
+     */
+    public String getBrokerFullInfo() {
+	return brokerFullInfo;
+    }
+    
     /**
      * @return firstName
      */
@@ -42,6 +52,13 @@ public class Broker implements IsSerializable {
      */
     public String getRepNumber() {
 	return repNumber;
+    }
+    
+    /**
+     * brokerFullInfo to set
+     */
+    public void setBrokerFullInfo() {
+	brokerFullInfo = repNumber + " - " + lastName + ", " + firstName;
     }
     
     /**

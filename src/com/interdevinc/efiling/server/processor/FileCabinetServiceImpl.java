@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.interdevinc.efiling.client.model.AccessControl;
 import com.interdevinc.efiling.client.model.AuthenticatedUser;
+import com.interdevinc.efiling.client.model.Broker;
 import com.interdevinc.efiling.client.model.Client;
 import com.interdevinc.efiling.client.model.DocumentType;
 import com.interdevinc.efiling.client.model.FileCabinet;
@@ -21,11 +22,17 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 
     private static final long serialVersionUID = 1L;
 
-    private final String url="jdbc:mysql://192.168.11.6/efilingsys";
-    private final String usernameRead = "efilingRead";
-    private final String passwordRead = "TUPMVfwTAEE8dTjv";
-    private final String usernameWrite = "efilingWrite";
-    private final String passwordWrite = "JERQUqGp74RUhN9d";
+    private final String host = "jdbc:mysql://192.168.11.6/";
+    
+    private final String efilingDatabase = "efilingsys";
+    private final String efilingUsernameRead = "efilingRead";
+    private final String efilingPasswordRead = "TUPMVfwTAEE8dTjv";
+    private final String efilingUsernameWrite = "efilingWrite";
+    private final String efilingPasswordWrite = "JERQUqGp74RUhN9d";
+    
+    private final String tradeDataDatabase = "clearingdata";
+    private final String tradeUsernameRead = "tradeDataRead";
+    private final String tradePasswordRead = "7rxLBUc5duVrWRZ2";
 
     private Connection connection;
     private Statement statement;
@@ -55,15 +62,31 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 	
 	loadScannedDocumentsIntoFileCabinet();
 	
+	try {
+	    connection.close();
+	} catch (SQLException e) {
+	    e.printStackTrace();
+	}
+	
 	return loadedFileCabinet;
 	
     }
  
-    public SearchComponents retrieveSearchComponents() {
+    /**
+     * METHOD: RETRIEVE SEARCH COMPONENTS
+     * @return searchComponents
+     */
+    public SearchComponents retrieveSearchComponents(FileCabinet fc) {
 	
+	loadedFileCabinet = fc;
 	searchComponents = new SearchComponents();
 	
-	loadClientInformation();
+	if (loadedFileCabinet.getCabinetName().equals("Broker Paperwork")) {
+	    loadBrokerInformation();
+	} else if (loadedFileCabinet.getCabinetName().equals("Client Paperwork")) {
+	    loadClientInformation();
+	}
+
 	loadDocumentTypeInformation();
 	
 	return searchComponents;
@@ -80,6 +103,12 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 
 	retrieveAuthenticatedUsersFileCabinets();
 
+	try {
+	    connection.close();
+	} catch (SQLException e) {
+	    e.printStackTrace();
+	}	
+	
 	return usersFileCabinets;
     }
 
@@ -97,7 +126,7 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 	try{
 
 	    //init connection and statement
-	    connection = getConnection(usernameRead, passwordRead);
+	    connection = getConnection(efilingDatabase, efilingUsernameRead, efilingPasswordRead);
 	    statement = connection.createStatement();
 
 	    //execute statement and retrieve resultSet
@@ -116,8 +145,7 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 
 	    //close all processing objects
 	    results.close();
-	    statement.close();
-	    connection.close();			
+	    statement.close();		
 
 	}catch (InstantiationException e){
 	    e.printStackTrace();
@@ -131,6 +159,10 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 
     }
     
+    /**
+     * METHOD: LOAD DOCUMENT TYPES INTO FILE CABINET (retrieveFileCabinetContents)
+     * Creates an ArrayList of DocumentType objects, sets FileCabinet with DocumentType.
+     */
     private void loadDocumentTypesIntoFileCabinet() {
 	
 	ArrayList<DocumentType> documentTypes = new ArrayList<DocumentType>();
@@ -149,7 +181,7 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 	try{
 
 	    //init connection and statement
-	    connection = getConnection(usernameRead, passwordRead);
+	    connection = getConnection(efilingDatabase, efilingUsernameRead, efilingPasswordRead);
 	    statement = connection.createStatement();
 
 	    //execute statement and retrieve resultSet
@@ -167,8 +199,7 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 
 	    //close all processing objects
 	    results.close();
-	    statement.close();
-	    connection.close();			
+	    statement.close();		
 
 	}catch (InstantiationException e){
 	    e.printStackTrace();
@@ -182,6 +213,10 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 	
     }
     
+    /**
+     * METHOD: LOAD SCANNED DOCUMENTS INTO FILE CABINET (retrieveFileCabinetContents)
+     * Creates an ArrayList of ScannedDocument objects, sets FileCabinet with ScannedDocument
+     */
     private void loadScannedDocumentsIntoFileCabinet() {
 	
 	ArrayList<ScannedDocument> scannedDocuments = new ArrayList<ScannedDocument>();
@@ -204,7 +239,7 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 	try{
 
 	    //init connection and statement
-	    connection = getConnection(usernameRead, passwordRead);
+	    connection = getConnection(efilingDatabase, efilingUsernameRead, efilingPasswordRead);
 	    statement = connection.createStatement();
 
 	    //execute statement and retrieve resultSet
@@ -222,8 +257,7 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 
 	    //close all processing objects
 	    results.close();
-	    statement.close();
-	    connection.close();			
+	    statement.close();			
 
 	}catch (InstantiationException e){
 	    e.printStackTrace();
@@ -237,16 +271,66 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 	
     }
     
-    private void loadClientInformation() {
+    /**
+     * METHOD: LOAD BROKER INFORMATION (retrieveSearchComponents)
+     * Creates an ArrayList of Broker objects, sets searchComponent Broker List.
+     */
+    private void loadBrokerInformation() {
 	
-	ArrayList<Client> clientInfo = new ArrayList<Client>();
-	
-	final String clientInfoQuery = "SELECT acctNum, firstName, lastName FROM clientInfo ORDER BY lastName";
+	final String brokerInfoQuery = "SELECT clearingdata.eamUsers.firstName, clearingdata.eamUsers.lastName, clearingdata.eamUsers.repNum FROM clearingdata.eamUsers WHERE repNum IS NOT NULL ORDER BY lastName";
 
+	ArrayList<Broker> brokerInfo = new ArrayList<Broker>();
+	
 	try{
 
 	    //init connection and statement
-	    connection = getConnection(usernameRead, passwordRead);
+	    connection = getConnection(tradeDataDatabase, tradeUsernameRead, tradePasswordRead);
+	    statement = connection.createStatement();
+
+	    //execute statement and retrieve resultSet
+	    statement.execute(brokerInfoQuery);
+	    results = statement.getResultSet();
+
+	    if (results != null) {
+		while (results.next()) {
+		    brokerInfo.add(new Broker(results.getString(1), results.getString(2), results.getString(3)));
+		}
+		
+		searchComponents.setBrokerList(brokerInfo);
+		
+	    }
+
+	    //close all processing objects
+	    results.close();
+	    statement.close();		
+	    connection.close();
+	    
+	}catch (InstantiationException e){
+	    e.printStackTrace();
+	}catch (IllegalAccessException e){
+	    e.printStackTrace();
+	}catch (ClassNotFoundException e){
+	    e.printStackTrace();
+	}catch (SQLException e){
+	    e.printStackTrace();
+	}
+	
+    }
+    
+    /**
+     * METHOD: LOAD CLIENT INFORMATION (retrieveSearchComponents)
+     * Creates an ArrayList of Client objects, sets searchComponent Client List.
+     */
+    private void loadClientInformation() {
+	
+	final String clientInfoQuery = "SELECT acctNum, firstName, lastName FROM clientInfo ORDER BY lastName";
+
+	ArrayList<Client> clientInfo = new ArrayList<Client>();
+	
+	try{
+
+	    //init connection and statement
+	    connection = getConnection(efilingDatabase, efilingUsernameRead, efilingPasswordRead);
 	    statement = connection.createStatement();
 
 	    //execute statement and retrieve resultSet
@@ -264,9 +348,9 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 
 	    //close all processing objects
 	    results.close();
-	    statement.close();
-	    connection.close();			
-
+	    statement.close();		
+	    connection.close();
+	    
 	}catch (InstantiationException e){
 	    e.printStackTrace();
 	}catch (IllegalAccessException e){
@@ -279,16 +363,29 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 	
     }
     
+    /**
+     * METHOD: LOAD DOCUMENT TYPE INFORMATION (retrieveSearchComponents)
+     * Creates an ArrayList of DocumentType objects, sets searchComponents Document Type List
+     */
     private void loadDocumentTypeInformation() {
 
 	ArrayList<DocumentType> documentTypeInfo = new ArrayList<DocumentType>();
 	
-	final String documentTypeInfoQuery = "SELECT catID, catName, catAbbr FROM clientDocType ORDER BY catName";
+	String databaseName = new String();
+	if (loadedFileCabinet.getCabinetName().equals("Broker Paperwork")) {
+	    databaseName = "brokerDocType";
+	} else if (loadedFileCabinet.getCabinetName().equals("Client Paperwork")) {
+	    databaseName = "clientDocType";
+	} else {
+	    databaseName = "";
+	}
+	
+	final String documentTypeInfoQuery = "SELECT catID, catName, catAbbr FROM " + databaseName + " ORDER BY catName";
 
 	try{
 
 	    //init connection and statement
-	    connection = getConnection(usernameRead, passwordRead);
+	    connection = getConnection(efilingDatabase, efilingUsernameRead, efilingPasswordRead);
 	    statement = connection.createStatement();
 
 	    //execute statement and retrieve resultSet
@@ -306,9 +403,9 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 
 	    //close all processing objects
 	    results.close();
-	    statement.close();
-	    connection.close();			
-
+	    statement.close();			
+	    connection.close();
+	    
 	}catch (InstantiationException e){
 	    e.printStackTrace();
 	}catch (IllegalAccessException e){
@@ -339,9 +436,10 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
      * @throws IllegalAccessException
      * @throws ClassNotFoundException
      * @throws SQLException */
-    private Connection getConnection(String username, String password) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException{
+    private Connection getConnection(String database, String username, String password) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException{
+	String url = host + database;
 	Class.forName("com.mysql.jdbc.Driver").newInstance();
-	return DriverManager.getConnection(url,username,password);
+	return DriverManager.getConnection(url, username, password);
     }
 
 }
