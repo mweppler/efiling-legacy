@@ -55,6 +55,10 @@ public class FileCabinetView {
 	return mainPanel;
     }
 
+    /**
+     * METHOD: ASSEMBLE COMPONENTS
+     * Assembles initial view components
+     */
     private void assembleComponents() {
 
 	mainPanel.add(taskTabPanel);
@@ -68,6 +72,10 @@ public class FileCabinetView {
 
     }
     
+    /**
+     * METHOD: INITIALIZE COMPONENTS
+     * Initializes initial components
+     */
     private void initializeComponents() {
 
 	taskTabPanel = new DecoratedTabPanel();
@@ -106,11 +114,20 @@ public class FileCabinetView {
 	    
     }
     
+    /**
+     * METHOD: LOAD INITIAL COMPONENTS
+     * Call to initializeComponents() & assembleComponents()
+     */
     private void loadInitialComponents() {
 	initializeComponents();
 	assembleComponents();
     }
     
+    /**
+     * PRIVATE CLASS: SEARCH COMPONENTS HANDLER
+     * @author mweppler
+     * GWT AsyncCallback
+     */
     private class SearchComponentsHandler implements AsyncCallback<SearchComponents> {
 
 	@Override

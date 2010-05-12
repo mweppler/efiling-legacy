@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.interdevinc.efiling.client.model.AuthenticatedUser;
 import com.interdevinc.efiling.client.model.FileCabinet;
+import com.interdevinc.efiling.client.model.ScannedDocument;
 import com.interdevinc.efiling.client.model.SearchComponents;
 
 public interface FileCabinetServiceAsync {
@@ -14,5 +15,7 @@ public interface FileCabinetServiceAsync {
     public void retrieveFileCabinetContents(FileCabinet fc, AsyncCallback<FileCabinet> callback);
     
     public void retrieveSearchComponents(FileCabinet fc, AsyncCallback<SearchComponents> callback);
+    
+    public void retrieveSearchResults(FileCabinet fc, String n, String d, AsyncCallback<ArrayList<ScannedDocument>> callback);
     
 }

@@ -42,6 +42,7 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
     private ArrayList<FileCabinet> usersFileCabinets;
     private FileCabinet loadedFileCabinet;
     private SearchComponents searchComponents;
+    private ArrayList<ScannedDocument> scannedDocuments;
 
     /**
      * CONSTRUCTOR: FILE CABINET SERVICE IMPL
@@ -90,6 +91,75 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 	loadDocumentTypeInformation();
 	
 	return searchComponents;
+    }
+    
+    /**
+     * METHOD: RETRIEVE SEARCH RESULTS
+     * @return scannedDocuments
+     * Returns an ArrayList of ScannedDocument objects.
+     */
+    public ArrayList<ScannedDocument> retrieveSearchResults(FileCabinet fc, String n, String d) {
+	
+	scannedDocuments = new ArrayList<ScannedDocument>();
+	
+	// Table modifiers
+	String tableName = new String();
+	String groupedBy = new String();
+	if (loadedFileCabinet.getCabinetName().equals("Broker Paperwork")) {
+	    tableName = "brokerFileLocation";
+	    groupedBy = "repNum";
+	} else if (loadedFileCabinet.getCabinetName().equals("Client Paperwork")) {
+	    tableName = "clientFileLocation";
+	    groupedBy = "clientAcctNum";
+	} else {
+	    tableName = "";
+	    groupedBy = "";
+	}
+	
+	// Query modifiers
+	StringBuilder where = new StringBuilder(" WHERE ");
+	if (n != null) {
+	    where.append(groupedBy + "='" + n + "' AND ");
+	}
+	if (d != null) {
+	    where.append("docuType='" + d + "' AND ");
+	}
+	String whereClause = where.substring(0, (where.length() - 4)).toString();
+	
+	final String searchQuery = "SELECT uploadId, fileName, fileSize, fileType, " + groupedBy + ", docuType, uploadDate FROM " + tableName + whereClause + "ORDER BY uploadDate DESC";
+	
+	try{
+
+	    //init connection and statement
+	    connection = getConnection(efilingDatabase, efilingUsernameRead, efilingPasswordRead);
+	    statement = connection.createStatement();
+
+	    //execute statement and retrieve resultSet
+	    statement.execute(searchQuery);
+	    results = statement.getResultSet();
+
+	    if (results != null) {
+		while (results.next()) {
+		    scannedDocuments.add(new ScannedDocument(results.getString(1), results.getString(2), results.getString(3), results.getString(4), results.getString(5), results.getString(6), results.getString(7)));
+		}
+	    }
+
+	    //close all processing objects
+	    results.close();
+	    statement.close();		
+	    connection.close();
+	    
+	}catch (InstantiationException e){
+	    e.printStackTrace();
+	}catch (IllegalAccessException e){
+	    e.printStackTrace();
+	}catch (ClassNotFoundException e){
+	    e.printStackTrace();
+	}catch (SQLException e){
+	    e.printStackTrace();
+	}
+	
+	return scannedDocuments;
     }
     
     /**
