@@ -4,32 +4,47 @@
     "http://java.sun.com/dtd/web-app_2_3.dtd">
 
 <web-app>
-  
-  <!-- Servlets -->
-  
-  <!-- File Cabinet Servlet -->
-    <servlet>
-        <servlet-name>fileCabinetServiceImpl</servlet-name>
-        <servlet-class>com.interdevinc.efiling.server.processor.FileCabinetServiceImpl</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>fileCabinetServiceImpl</servlet-name>
-        <url-pattern>/efiling/filecabinet</url-pattern>
-    </servlet-mapping>
-  
-  <!-- Login Servlet -->
-    <servlet>
-        <servlet-name>authenticationServiceImpl</servlet-name>
-        <servlet-class>com.interdevinc.efiling.server.processor.AuthenticationServiceImpl</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>authenticationServiceImpl</servlet-name>
-        <url-pattern>/efiling/authentication</url-pattern>
-    </servlet-mapping>
-    
-  <!-- Default page to serve -->
-  <welcome-file-list>
-    <welcome-file>efiling.html</welcome-file>
-  </welcome-file-list>
+
+	<!-- Servlets -->
+
+	<!-- File Cabinet Servlet -->
+	<servlet>
+		<servlet-name>fileCabinetServiceImpl</servlet-name>
+		<servlet-class>com.interdevinc.efiling.server.processor.FileCabinetServiceImpl</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>fileCabinetServiceImpl</servlet-name>
+		<url-pattern>/efiling/filecabinet</url-pattern>
+	</servlet-mapping>
+
+	<!-- File Download Servlet -->
+	<servlet>
+		<servlet-name>fileDownloadServlet</servlet-name>
+		<servlet-class>com.interdevinc.efiling.server.processor.FileDownloadServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>fileDownloadServlet</servlet-name>
+		<url-pattern>/efiling/filedownload</url-pattern>
+	</servlet-mapping>
+
+	<!-- Login Servlet -->
+	<servlet>
+		<servlet-name>authenticationServiceImpl</servlet-name>
+		<servlet-class>com.interdevinc.efiling.server.processor.AuthenticationServiceImpl</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>authenticationServiceImpl</servlet-name>
+		<url-pattern>/efiling/authentication</url-pattern>
+	</servlet-mapping>
+
+	<!-- Default page to serve -->
+	<welcome-file-list>
+		<welcome-file>efiling.html</welcome-file>
+	</welcome-file-list>
+
+	<display-name>InterDev Inc. Efiling System</display-name>
+	<description>
+		InterDev Inc. Efiling System
+    </description>
 
 </web-app>

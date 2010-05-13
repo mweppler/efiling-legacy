@@ -23,7 +23,9 @@ public class InformationDialogBox extends DialogBox {
 	setGlassEnabled(true);
 	setAnimationEnabled(true);
 	setText(text);
-	HTML html = new HTML("<div align='center'><img align='center' src='images/loading.gif' border=0 /></div><p>Please wait momentarily while the necessary component(s) finish loading.");
+	//TODO Change before compiling...
+	//HTML html = new HTML("<div align='center'><img align='center' src='Efiling/images/loading.gif' border=0 /></div><p>Please wait momentarily while the necessary component(s) finish loading.");
+	HTML html = new HTML("<div align='center'><img align='center' src='/images/loading.gif' border=0 /></div><p>Please wait momentarily while the necessary component(s) finish loading.");
 	add(html);
 	center();
 	show();

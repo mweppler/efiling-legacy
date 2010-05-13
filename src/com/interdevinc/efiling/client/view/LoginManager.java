@@ -114,9 +114,12 @@ public class LoginManager implements ClickHandler,KeyPressHandler {
 
 	// Images for the username/password icons.
 	userImg = new Image();
+	//TODO Change before compiling...
+	//userImg.setUrl("/Efiling/images/user.gif");
 	userImg.setUrl("/images/user.gif");
 	userImg.setSize("32px", "32px");
 	passImg = new Image();
+	//passImg.setUrl("/Efiling/images/pass.gif");
 	passImg.setUrl("/images/pass.gif");
 	passImg.setSize("32px", "32px");
 

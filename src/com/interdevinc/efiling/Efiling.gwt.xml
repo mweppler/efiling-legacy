@@ -24,6 +24,7 @@
   <!--  Servlets                                                  -->
   <servlet class="com.interdevinc.efiling.server.processor.AuthenticationServiceImpl" path="/authentication" />
   <servlet class="com.interdevinc.efiling.server.processor.FileCabinetServiceImpl" path="/filecabinet" />
+  <servlet class="com.interdevinc.efiling.server.processor.FileDownloadServlet" path="/filedownload" />
   
   <!-- Specify the paths for translatable code                    -->
   <source path='client'/>

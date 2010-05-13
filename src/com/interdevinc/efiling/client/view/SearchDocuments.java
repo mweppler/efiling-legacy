@@ -7,6 +7,8 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
@@ -33,7 +35,7 @@ public class SearchDocuments implements ChangeHandler {
     private TextBox quickSearchTextbox;
     private ListBox cabinetTypeInfoList;
     private ListBox documentTypeList;
-
+    
     private AuthenticatedUser authenticatedUser;
     private FileCabinet fileCabinet;
     private SearchComponents searchComponents;
@@ -143,7 +145,7 @@ public class SearchDocuments implements ChangeHandler {
 	++row;
 
 	searchDocumentsPanel.add(searchComponentsTable);
-
+	
     }
 
     /**
@@ -154,18 +156,37 @@ public class SearchDocuments implements ChangeHandler {
 
 	searchResultsTable.removeAllRows();
 	
+	String numberTypeText = new String();
+	String cabinetType = new String();
+	if (fileCabinet.getCabinetName().equals("Broker Paperwork")) {
+	    numberTypeText = "Broker";
+	    cabinetType = "broker";
+	} else if (fileCabinet.getCabinetName().equals("Client Paperwork")) {
+	    numberTypeText = "Client";
+	    cabinetType = "client";
+	}
+	
 	int row = 0;
-	searchResultsTable.setText(row, 0, "Number");
+	searchResultsTable.setText(row, 0, numberTypeText + "#");
 	searchResultsTable.setText(row, 1, "Document Type");
 	searchResultsTable.setText(row, 2, "File Name");
-	searchResultsTable.setText(row, 2, "Upload Date");
+	searchResultsTable.setText(row, 3, "Upload Date");
 	++row;
 
 	for (ScannedDocument scannedDocument : scannedDocuments) {
+	    String link = GWT.getModuleBaseURL() + "filedownload?cabinet=" + cabinetType + "&uploadID=" + scannedDocument.getUploadID(); 
+	    HTML pdfFileName = new HTML();
+		//TODO Change before compiling...
+	    //String htmlString = "<a href='" + link + "'><img src='/Efiling/images/pdfImage.gif' width='20px' height='20px' align='center' border='0'>" + scannedDocument.getFileName() + "</a>";
+	    String htmlString = "<a href='" + link + "'><img src='/images/pdfImage.gif' width='20px' height='20px' align='center' border='0'>" + scannedDocument.getFileName() + "</a>";
+	    pdfFileName.setHTML(htmlString);
+	    
 	    searchResultsTable.setText(row, 0, scannedDocument.getGroupedBy());
 	    searchResultsTable.setText(row, 1, scannedDocument.getDocumentTypeAbbr());
-	    searchResultsTable.setText(row, 2, scannedDocument.getFileName());
+	    searchResultsTable.setWidget(row, 2, pdfFileName);
 	    searchResultsTable.setText(row, 3, scannedDocument.getUploadDate());
+	    
+	    searchResultsTable.getCellFormatter().setStyleName(row, 2, "link-element");
 	    ++row;
 	}
 
