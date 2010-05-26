@@ -1,89 +1,205 @@
 package com.interdevinc.efiling.client.view;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FileUpload;
-import com.google.gwt.user.client.ui.FormHandler;
 import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.FormSubmitCompleteEvent;
-import com.google.gwt.user.client.ui.FormSubmitEvent;
+import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
+import com.google.gwt.user.client.ui.FormPanel.SubmitEvent;
+import com.interdevinc.efiling.client.model.AuthenticatedUser;
+import com.interdevinc.efiling.client.model.Broker;
+import com.interdevinc.efiling.client.model.Client;
+import com.interdevinc.efiling.client.model.DocumentType;
+import com.interdevinc.efiling.client.model.FileCabinet;
+import com.interdevinc.efiling.client.model.SearchComponents;
+import com.interdevinc.efiling.shared.view.InformationDialogBox;
 
-public class UploadDocument {
+public class UploadDocument implements ClickHandler, FormPanel.SubmitCompleteHandler, FormPanel.SubmitHandler {
+
+    private AuthenticatedUser authenticatedUser;
+    private FileCabinet fileCabinet;
+    private SearchComponents searchComponents;
 
     // Panels
     private VerticalPanel mainPanel;
+    private FormPanel uploadFormPanel;
+    private VerticalPanel widgetPanel;
 
-    public UploadDocument(VerticalPanel mp) {
+    // Form components
+    private Button uploadFileButton;
+    private FileUpload fileUploadWidget;
+    private Hidden cabinetFormField;
+    private Hidden associatedWithFormField;
+    private Hidden documentTypeFormField;
+    private ListBox associatedWithListbox;
+    private ListBox documentTypeListbox;
+
+    /**
+     * CONSTRUCTOR: UPLOAD DOCUMENT
+     * @param au the authenticatedUser to set
+     * @param fc the fileCabinet to set
+     * @param mp the mainPanel to set
+     * @param sc the searchComponents to set
+     * Sets components, initializes and assembles components.
+     */
+    public UploadDocument(AuthenticatedUser au, FileCabinet fc, VerticalPanel mp, SearchComponents sc) {
+	authenticatedUser = au;
+	fileCabinet = fc;
+	searchComponents = sc;
 	mainPanel = mp;
+
+	initializeInitialComponents();
+	assembleInitialComponents();
     }
 
-    public void loadUploadForm() {
-	// Create a FormPanel and point it at a service.
-	final FormPanel form = new FormPanel();
-	form.setAction("/myFormHandler");
+    /**
+     * METHOD: ON CLICK
+     * The on click method for the submit button. Calls onSubmit().
+     */
+    public void onClick(ClickEvent event) {
+	uploadFormPanel.submit();
+    }
+
+    /**
+     * METHOD: ON SUBMIT
+     * The on submit method for the form submission. Checks for form data, sets the values, and adds the submit complete handler.
+     */
+    public void onSubmit(SubmitEvent event) {
+
+	if (associatedWithListbox.getSelectedIndex() <= 0) {
+	    Window.alert("Please choose who the file is associated.");
+	    event.cancel();
+	}
+
+	if (documentTypeListbox.getSelectedIndex() <= 0) {
+	    Window.alert("Please choose a Document Type.");
+	    event.cancel();
+	}
+
+	if (fileUploadWidget.getFilename().equals("")) {
+	    Window.alert("Please select a file to upload.");
+	    event.cancel();
+	}
+
+	if (!event.isCanceled()) {
+
+	    if (fileCabinet.getCabinetName().equals("Broker Paperwork")) {
+		associatedWithFormField.setValue(searchComponents.getBrokerList().get(associatedWithListbox.getSelectedIndex() - 1).getRepNumber());
+	    } else if (fileCabinet.getCabinetName().equals("Client Paperwork")) {
+		associatedWithFormField.setValue(searchComponents.getClientList().get(associatedWithListbox.getSelectedIndex() - 1).getAccountNumber());
+	    }
+
+	    documentTypeFormField.setValue(searchComponents.getDocumentTypeList().get(documentTypeListbox.getSelectedIndex() - 1).getDocumentTypeAbbr());
+
+	    if (fileCabinet.getCabinetName().equals("Broker Paperwork")) {
+		cabinetFormField.setValue("broker");
+	    } else if (fileCabinet.getCabinetName().equals("Client Paperwork")) {
+		cabinetFormField.setValue("client");
+	    }
+
+	    uploadFormPanel.addSubmitCompleteHandler(this);
+	}
+
+    }
+
+    /**
+     * METHOD: ON SUBMIT COMPLETE
+     * The on submit complete method, waits for a response message and displays it in a dialog box.
+     */
+    public void onSubmitComplete(SubmitCompleteEvent event) {
+	InformationDialogBox idb = new InformationDialogBox();
+	idb.errorMessageDialogBox("File Upload Result", event.getResults());
+    }
+
+    /**
+     * METHOD: ASSEMBLE INITIAL COMPONENTS
+     */
+    private void assembleInitialComponents() {
+
+	// Point the FormPanel at a service.
+	//uploadFormPanel.setAction(GWT.getModuleBaseURL() + "fileupload");
+	uploadFormPanel.setAction(GWT.getHostPageBaseURL() + "efiling/fileupload");
 
 	// Because we're going to add a FileUpload widget, we'll need to set the
 	// form to use the POST method, and multipart MIME encoding.
-	form.setEncoding(FormPanel.ENCODING_MULTIPART);
-	form.setMethod(FormPanel.METHOD_POST);
+	uploadFormPanel.setEncoding(FormPanel.ENCODING_MULTIPART);
+	uploadFormPanel.setMethod(FormPanel.METHOD_POST);
 
-	// Create a panel to hold all of the form widgets.
-	VerticalPanel panel = new VerticalPanel();
-	form.setWidget(panel);
-
-	// Create a TextBox, giving it a name so that it will be submitted.
-	final TextBox tb = new TextBox();
-	tb.setName("textBoxFormElement");
-	panel.add(tb);
-
-	// Create a ListBox, giving it a name and some values to be associated with
-	// its options.
-	ListBox lb = new ListBox();
-	lb.setName("listBoxFormElement");
-	lb.addItem("foo", "fooValue");
-	lb.addItem("bar", "barValue");
-	lb.addItem("baz", "bazValue");
-	panel.add(lb);
-
-	// Create a FileUpload widget.
-	FileUpload upload = new FileUpload();
-	upload.setName("uploadFormElement");
-	panel.add(upload);
-
-	// Add a 'submit' button.
-	panel.add(new Button("Submit", new ClickListener() {
-	    public void onClick(Widget sender) {
-		form.submit();
+	uploadFormPanel.addSubmitHandler(this);
+	
+	uploadFormPanel.setWidget(widgetPanel);
+	
+	if (fileCabinet.getCabinetName().equals("Broker Paperwork")) {
+	    // Build Listboxes.
+	    associatedWithListbox.addItem("Upload Broker Info");
+	    for (Broker brokerInfo : searchComponents.getBrokerList()) {
+		associatedWithListbox.addItem(brokerInfo.getBrokerFullInfo());
 	    }
-	}));
-
-	// Add an event handler to the form.
-	form.addFormHandler(new FormHandler() {
-	    public void onSubmit(FormSubmitEvent event) {
-		// This event is fired just before the form is submitted. We can take
-		// this opportunity to perform validation.
-		if (tb.getText().length() == 0) {
-		    Window.alert("The text box must not be empty");
-		    event.setCancelled(true);
-		}
+	} else if (fileCabinet.getCabinetName().equals("Client Paperwork")) {
+	    // Build Listboxes.
+	    associatedWithListbox.addItem("Upload Client Info");
+	    for (Client clientInfo : searchComponents.getClientList()) {
+		associatedWithListbox.addItem(clientInfo.getClientFullInfo());
 	    }
+	} else {
+	    associatedWithListbox.addItem("Cabinet not loaded!");
+	}
+	widgetPanel.add(associatedWithListbox);
 
-	    public void onSubmitComplete(FormSubmitCompleteEvent event) {
-		// When the form submission is successfully completed, this event is
-		// fired. Assuming the service returned a response of type text/html,
-		// we can get the result text here (see the FormPanel documentation for
-		// further explanation).
-		Window.alert(event.getResults());
-	    }
-	});
+	documentTypeListbox.addItem("Upload Document Type");
+	for (DocumentType documentTypeInfo : searchComponents.getDocumentTypeList()) {
+	    documentTypeListbox.addItem(documentTypeInfo.getDocumentTypeFullInfo());
+	}
+	widgetPanel.add(documentTypeListbox);
 
-	RootPanel.get().add(form);
+	associatedWithFormField.setName("associatedWith");
+	widgetPanel.add(associatedWithFormField);
+	
+	documentTypeFormField.setName("documentType");
+	widgetPanel.add(documentTypeFormField);
+	    
+	cabinetFormField.setName("fileCabinet");
+	widgetPanel.add(cabinetFormField);
+
+	fileUploadWidget.setName("uploadForm");
+	widgetPanel.add(fileUploadWidget);
+
+	uploadFileButton.addClickHandler(this);
+	widgetPanel.add(uploadFileButton);
+
+	mainPanel.add(uploadFormPanel);
+	
     }
+
+
+    /**
+     * METHOD: INITIALIZE INITIAL COMPONENTS
+     */
+    private void initializeInitialComponents() {
+	
+	// Create a FormPanel.
+	uploadFormPanel = new FormPanel();
+	
+	// Create a panel to hold all of the form widgets.
+	widgetPanel = new VerticalPanel();
+	
+	associatedWithListbox = new ListBox();
+	documentTypeListbox = new ListBox();
+	associatedWithFormField = new Hidden();
+	documentTypeFormField = new Hidden();
+	cabinetFormField = new Hidden();
+	// Create a FileUpload widget.
+	fileUploadWidget = new FileUpload();
+	// Add a 'submit' button.
+	uploadFileButton = new Button("Upload File");
+	
+    }
+
 
 }

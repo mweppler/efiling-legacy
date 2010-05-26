@@ -86,7 +86,7 @@ public class FileCabinetView {
 	SearchDocuments searchDocuments = new SearchDocuments(authenticatedUser, fileCabinet, searchDocumentsPanel, searchComponents);
 
 	uploadDocumentPanel = new VerticalPanel();
-	UploadDocument uploadDocument = new UploadDocument(uploadDocumentPanel);
+	UploadDocument uploadDocument = new UploadDocument(authenticatedUser, fileCabinet, uploadDocumentPanel, searchComponents);
 
 	editDocumentTypesPanel = new VerticalPanel();
 	EditDocumentTypes editDocumentType = new EditDocumentTypes(editDocumentTypesPanel);

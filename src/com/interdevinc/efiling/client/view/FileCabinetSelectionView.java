@@ -96,9 +96,7 @@ public class FileCabinetSelectionView {
 	int row = 0; // First row in table.
 	for (final FileCabinet fileCabinet: fileCabinets) {
 	    HTML fileCabinetHtmlSelection = new HTML();
-		//TODO Change before compiling...
-	    //String htmlString = "<img src='/Efiling/images/filecabinet.gif' width='32px' height='32px' align='center'>" + fileCabinet.getCabinetName();
-	    String htmlString = "<img src='/images/filecabinet.gif' width='32px' height='32px' align='center'>" + fileCabinet.getCabinetName();
+	    String htmlString = "<img src='" + GWT.getHostPageBaseURL() + "images/filecabinet.gif' width='32px' height='32px' align='center'>" + fileCabinet.getCabinetName();
 	    fileCabinetHtmlSelection.setHTML(htmlString);
 	    
 	    fileCabinetHtmlSelection.addClickHandler(new ClickHandler() {

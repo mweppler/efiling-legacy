@@ -55,7 +55,7 @@ public class LoginManager implements ClickHandler,KeyPressHandler {
 
 	    //get fields and hash password
 	    final String username = nameBox.getText();
-	    final String password=Hash.md5(passBox.getText());
+	    final String password = Hash.md5(passBox.getText());
 
 	    //execute authentication procedure
 	    authentication.authenticateUser(username, password, authenticationHandler);
@@ -69,7 +69,7 @@ public class LoginManager implements ClickHandler,KeyPressHandler {
      * METHOD:	ON KEY PRESS
      * Keyboard events for associated widgets/components	 */
     public void onKeyPress(KeyPressEvent keyEvent) {
-	if(keyEvent.getNativeEvent().getKeyCode()==KeyCodes.KEY_ENTER){
+	if(keyEvent.getNativeEvent().getKeyCode() == KeyCodes.KEY_ENTER){
 	    submit.click();
 	}
     }
@@ -114,13 +114,10 @@ public class LoginManager implements ClickHandler,KeyPressHandler {
 
 	// Images for the username/password icons.
 	userImg = new Image();
-	//TODO Change before compiling...
-	//userImg.setUrl("/Efiling/images/user.gif");
-	userImg.setUrl("/images/user.gif");
+	userImg.setUrl(GWT.getHostPageBaseURL() + "images/user.gif");
 	userImg.setSize("32px", "32px");
 	passImg = new Image();
-	//passImg.setUrl("/Efiling/images/pass.gif");
-	passImg.setUrl("/images/pass.gif");
+	passImg.setUrl(GWT.getHostPageBaseURL() + "images/pass.gif");
 	passImg.setSize("32px", "32px");
 
 	//init loginFieldsTable

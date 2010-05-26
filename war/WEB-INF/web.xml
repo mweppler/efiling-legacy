@@ -27,6 +27,16 @@
 		<url-pattern>/efiling/filedownload</url-pattern>
 	</servlet-mapping>
 
+	<!-- File Upload Servlet -->
+	<servlet>
+		<servlet-name>fileUploadServlet</servlet-name>
+		<servlet-class>com.interdevinc.efiling.server.processor.FileUploadServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>fileUploadServlet</servlet-name>
+		<url-pattern>/efiling/fileupload</url-pattern>
+	</servlet-mapping>
+
 	<!-- Login Servlet -->
 	<servlet>
 		<servlet-name>authenticationServiceImpl</servlet-name>

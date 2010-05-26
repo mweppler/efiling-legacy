@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
@@ -176,9 +177,7 @@ public class SearchDocuments implements ChangeHandler {
 	for (ScannedDocument scannedDocument : scannedDocuments) {
 	    String link = GWT.getModuleBaseURL() + "filedownload?cabinet=" + cabinetType + "&uploadID=" + scannedDocument.getUploadID(); 
 	    HTML pdfFileName = new HTML();
-		//TODO Change before compiling...
-	    //String htmlString = "<a href='" + link + "'><img src='/Efiling/images/pdfImage.gif' width='20px' height='20px' align='center' border='0'>" + scannedDocument.getFileName() + "</a>";
-	    String htmlString = "<a href='" + link + "'><img src='/images/pdfImage.gif' width='20px' height='20px' align='center' border='0'>" + scannedDocument.getFileName() + "</a>";
+	    String htmlString = "<a href='" + link + "'><img src='" + GWT.getHostPageBaseURL() + "images/pdfImage.gif' width='20px' height='20px' align='center' border='0'>" + scannedDocument.getFileName() + "</a>";
 	    pdfFileName.setHTML(htmlString);
 	    
 	    searchResultsTable.setText(row, 0, scannedDocument.getGroupedBy());

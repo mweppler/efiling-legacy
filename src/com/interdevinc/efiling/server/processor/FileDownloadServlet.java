@@ -71,6 +71,8 @@ public class FileDownloadServlet extends HttpServlet {
 
 	String groupBy = new String();
 	String table = new String();
+	
+	// TODO Production Environment
 	if (request.getParameter("cabinet").equals("broker")) {
 	    groupBy = "repNum";
 	    table = "brokerFileLocation";
@@ -79,7 +81,10 @@ public class FileDownloadServlet extends HttpServlet {
 	    table = "clientFileLocation";
 	}
 	
-	final String brokerInfoQuery = "SELECT uploadId, fileName, fileSize, fileType, " + groupBy + ", docuType, uploadDate FROM " + table + " WHERE uploadId='" + request.getParameter("uploadID") + "'";
+	// TODO Development Environment
+	//table = "testLocation";
+	
+	final String requestedFileInfoQuery = "SELECT uploadId, fileName, fileSize, fileType, " + groupBy + ", docuType, uploadDate FROM " + table + " WHERE uploadId='" + request.getParameter("uploadID") + "'";
 
 	try{
 
@@ -88,7 +93,7 @@ public class FileDownloadServlet extends HttpServlet {
 	    statement = connection.createStatement();
 
 	    //execute statement and retrieve resultSet
-	    statement.execute(brokerInfoQuery);
+	    statement.execute(requestedFileInfoQuery);
 	    results = statement.getResultSet();
 
 	    if (results != null) {
@@ -125,8 +130,11 @@ public class FileDownloadServlet extends HttpServlet {
 	int extensionStartsAt = fileName.indexOf(".");
 	String fileExtension = fileName.substring(extensionStartsAt, fileName.length());
 	
-	// Create an file object from the file stored on the server.
+	// TODO Production Environment
 	File file = new File("/opt/lampp/webapps/cabinets/" + request.getParameter("cabinet") + "/" + scannedDocument.getUploadID() + fileExtension);
+
+	// TODO Development Environment
+	//File file = new File("/tmp/" + request.getParameter("cabinet") + "/" + scannedDocument.getUploadID() + fileExtension);
 	
 	int length = 0; 
 	ServletOutputStream outputStream;
