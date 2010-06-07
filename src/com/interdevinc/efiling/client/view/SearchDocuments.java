@@ -5,13 +5,13 @@ import java.util.ArrayList;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
+import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.interdevinc.efiling.client.model.AuthenticatedUser;
@@ -33,10 +33,12 @@ public class SearchDocuments implements ChangeHandler {
     private FlexTable searchResultsTable;
     private InformationDialogBox idb;
 
-    private TextBox quickSearchTextbox;
     private ListBox cabinetTypeInfoList;
     private ListBox documentTypeList;
-    
+    private MultiWordSuggestOracle searchOracle;
+    private SuggestBox quickSearchSuggestbox;
+    private TextBox quickSearchTextbox;
+
     private AuthenticatedUser authenticatedUser;
     private FileCabinet fileCabinet;
     private SearchComponents searchComponents;
@@ -112,12 +114,18 @@ public class SearchDocuments implements ChangeHandler {
      */
     private void assembleComponents() {
 
+	searchOracle.add("Cat");
+	searchOracle.add("Dog");
+	searchOracle.add("Horse");
+	searchOracle.add("Canary");
+
 	int row = 0;
 	searchComponentsTable.setWidget(row, 0, new Label("Quick Search:"));
-	searchComponentsTable.setWidget(row, 1, quickSearchTextbox);
+	searchComponentsTable.setWidget(row, 1, quickSearchSuggestbox);
 	++row;
 
 	searchComponentsTable.setWidget(row, 0, cabinetTypeInfoList);
+	//searchComponentsTable.setWidget(row, 1, documentTypeList);
 	searchComponentsTable.setWidget(row, 1, documentTypeList);
 
 	// Test cabinet type.
@@ -146,7 +154,7 @@ public class SearchDocuments implements ChangeHandler {
 	++row;
 
 	searchDocumentsPanel.add(searchComponentsTable);
-	
+
     }
 
     /**
@@ -156,7 +164,7 @@ public class SearchDocuments implements ChangeHandler {
     private void displaySearchResults() {
 
 	searchResultsTable.removeAllRows();
-	
+
 	String numberTypeText = new String();
 	String cabinetType = new String();
 	if (fileCabinet.getCabinetName().equals("Broker Paperwork")) {
@@ -166,7 +174,7 @@ public class SearchDocuments implements ChangeHandler {
 	    numberTypeText = "Client";
 	    cabinetType = "client";
 	}
-	
+
 	int row = 0;
 	searchResultsTable.setText(row, 0, numberTypeText + "#");
 	searchResultsTable.setText(row, 1, "Document Type");
@@ -179,12 +187,12 @@ public class SearchDocuments implements ChangeHandler {
 	    HTML pdfFileName = new HTML();
 	    String htmlString = "<a href='" + link + "'><img src='" + GWT.getHostPageBaseURL() + "images/pdfImage.gif' width='20px' height='20px' align='center' border='0'>" + scannedDocument.getFileName() + "</a>";
 	    pdfFileName.setHTML(htmlString);
-	    
+
 	    searchResultsTable.setText(row, 0, scannedDocument.getGroupedBy());
 	    searchResultsTable.setText(row, 1, scannedDocument.getDocumentTypeAbbr());
 	    searchResultsTable.setWidget(row, 2, pdfFileName);
 	    searchResultsTable.setText(row, 3, scannedDocument.getUploadDate());
-	    
+
 	    searchResultsTable.getCellFormatter().setStyleName(row, 2, "link-element");
 	    ++row;
 	}
@@ -203,12 +211,15 @@ public class SearchDocuments implements ChangeHandler {
 
 	// Initialize RPC handler
 	searchResultsHandler = new SearchResultsHandler();
-	
+
 	searchComponentsTable = new FlexTable();
+	searchOracle = new MultiWordSuggestOracle();
+	quickSearchSuggestbox = new SuggestBox(searchOracle);
 	quickSearchTextbox = new TextBox();
 	cabinetTypeInfoList = new ListBox();
 	documentTypeList = new ListBox();
 	searchResultsTable = new FlexTable();
+
     }
 
 

@@ -44,13 +44,134 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
     private SearchComponents searchComponents;
     private ArrayList<ScannedDocument> scannedDocuments;
 
+    private String documentTypeName;
+    private String documentTypeAbbr;
+    private String documentTypeAbbrOld;
+    private String resultMessage;
+    
     /**
      * CONSTRUCTOR: FILE CABINET SERVICE IMPL
      */
     public FileCabinetServiceImpl() {
     }
 
+    public String addDocumentType(FileCabinet fc, String dtn, String dta) {
+	
+	loadedFileCabinet = fc;
+	documentTypeName = dtn;
+	documentTypeAbbr = dta;
+	
+	// If the Document Abbr is already in the database return without making any changes.
+	if (checkForDocumentTypeExistance()) {
+	    return "A document type: " + documentTypeAbbr + " already exists.";
+	}
+	
+	insertDocumentTypeIntoDatabase();
+	
+	return resultMessage;
+    }
+    
+    public String deleteDocumentType(FileCabinet fc, String documentTypeAbbr) {
+	return "Tried to delete document type: " + documentTypeAbbr;
+    }
+    
+    public String editDocumentType(FileCabinet fc, String documentTypeName, String documentTypeAbbr, String documentTypeAbbrOld) {
+	return "Tried to edit document type: " + "\"" + documentTypeAbbrOld + "\"" + " to: " + documentTypeName + " - " + documentTypeAbbr;
+    }
+    
+    private boolean checkForDocumentTypeExistance() {
+	
+	boolean documentTypeExists = false;
+	
+	// Table modifiers
+	String tableName = new String();
+	if (loadedFileCabinet.getCabinetName().equals("Broker Paperwork")) {
+	    tableName = "brokerDocType";
+	} else if (loadedFileCabinet.getCabinetName().equals("Client Paperwork")) {
+	    tableName = "clientDocType";
+	} else {
+	    tableName = "";
+	}
+	
+	final String searchQuery = "SELECT catID FROM " + tableName + " WHERE catName='" + documentTypeName + "' AND catAbbr='" + documentTypeAbbr + "'";
+	
+	try{
 
+	    //init connection and statement
+	    connection = getConnection(efilingDatabase, efilingUsernameRead, efilingPasswordRead);
+	    statement = connection.createStatement();
+
+	    //execute statement and retrieve resultSet
+	    statement.execute(searchQuery);
+	    results = statement.getResultSet();
+
+	    if (results.next()) {
+		documentTypeExists = true;
+	    }
+
+	    //close all processing objects
+	    results.close();
+	    statement.close();		
+	    connection.close();
+	    
+	}catch (InstantiationException e){
+	    e.printStackTrace();
+	}catch (IllegalAccessException e){
+	    e.printStackTrace();
+	}catch (ClassNotFoundException e){
+	    e.printStackTrace();
+	}catch (SQLException e){
+	    e.printStackTrace();
+	}
+	
+	return documentTypeExists;
+    }
+    
+    private void insertDocumentTypeIntoDatabase() {
+	
+	// Table modifiers
+	String tableName = new String();
+	if (loadedFileCabinet.getCabinetName().equals("Broker Paperwork")) {
+	    tableName = "brokerDocType";
+	} else if (loadedFileCabinet.getCabinetName().equals("Client Paperwork")) {
+	    tableName = "clientDocType";
+	} else {
+	    tableName = "";
+	}
+	
+	final String insertQuery = "INSERT INTO " + tableName + " (catName, catAbbr) VALUES ('" + documentTypeName + "', '" + documentTypeAbbr + "')";
+	
+	try{
+
+	    //init connection and statement
+	    connection = getConnection(efilingDatabase, efilingUsernameRead, efilingPasswordRead);
+	    statement = connection.createStatement();
+
+	    //execute statement and retrieve resultSet
+	    int insertedRows = statement.executeUpdate(insertQuery);
+
+	    if (insertedRows > 0) {
+		resultMessage = new String("Added document type: " + documentTypeName + " - " + documentTypeAbbr);
+	    } else {
+		resultMessage = new String("Error adding document type: " + documentTypeName + " - " + documentTypeAbbr);
+	    }
+	    
+	    //close all processing objects
+	    statement.close();		
+	    connection.close();
+	    
+	}catch (InstantiationException e){
+	    e.printStackTrace();
+	}catch (IllegalAccessException e){
+	    e.printStackTrace();
+	}catch (ClassNotFoundException e){
+	    e.printStackTrace();
+	}catch (SQLException e){
+	    e.printStackTrace();
+	}
+	
+    }
+    
     /**
      * METHOD: RETRIEVE FILE CABINET CONTENTS
      * @return loadedFileCabinet

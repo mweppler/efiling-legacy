@@ -89,11 +89,11 @@ public class FileCabinetView {
 	UploadDocument uploadDocument = new UploadDocument(authenticatedUser, fileCabinet, uploadDocumentPanel, searchComponents);
 
 	editDocumentTypesPanel = new VerticalPanel();
-	EditDocumentTypes editDocumentType = new EditDocumentTypes(editDocumentTypesPanel);
+	EditDocumentTypes editDocumentType = new EditDocumentTypes(authenticatedUser, fileCabinet, editDocumentTypesPanel, searchComponents);
 
 	if (fileCabinet.getCabinetName().equals("Client Paperwork")) {
 	    editClientInfoPanel = new VerticalPanel();
-	    EditClientInfo editClientInfo = new EditClientInfo(editClientInfoPanel);
+	    EditClientInfo editClientInfo = new EditClientInfo(authenticatedUser, fileCabinet, editClientInfoPanel, searchComponents);
 	}
 	
     }

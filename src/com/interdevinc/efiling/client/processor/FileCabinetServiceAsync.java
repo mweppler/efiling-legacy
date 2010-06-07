@@ -18,4 +18,10 @@ public interface FileCabinetServiceAsync {
     
     public void retrieveSearchResults(FileCabinet fc, String n, String d, AsyncCallback<ArrayList<ScannedDocument>> callback);
     
+    public void addDocumentType(FileCabinet fc, String documentTypeName, String documentTypeAbbr, AsyncCallback<String> callback);
+    
+    public void deleteDocumentType(FileCabinet fc, String documentTypeAbbr, AsyncCallback<String> callback);
+    
+    public void editDocumentType(FileCabinet fc, String documentTypeName, String documentTypeAbbr, String documentTypeAbbrOld, AsyncCallback<String> callback);
+    
 }

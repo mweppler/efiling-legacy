@@ -20,4 +20,10 @@ public interface FileCabinetService extends RemoteService {
     
     public ArrayList<ScannedDocument> retrieveSearchResults(FileCabinet fc, String n, String d);
     
+    public String addDocumentType(FileCabinet fc, String documentTypeName, String documentTypeAbbr);
+    
+    public String deleteDocumentType(FileCabinet fc, String documentTypeAbbr);
+    
+    public String editDocumentType(FileCabinet fc, String documentTypeName, String documentTypeAbbr, String documentTypeAbbrOld);
+    
 }
