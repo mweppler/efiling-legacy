@@ -8,10 +8,10 @@ public class InformationDialogBox extends DialogBox {
 
     private Timer loadingTimer;
     
-    public void loadingDialogBox(String text) {
+    public void loadingDialogBox(String titleBarText) {
 	setGlassEnabled(true);
 	setAnimationEnabled(true);
-	setText(text);
+	setText(titleBarText);
 	//TODO Change before compiling...
 	//HTML html = new HTML("<div align='center'><img align='center' src='Efiling/images/loading.gif' border=0 /></div><p>Please wait momentarily while the necessary component(s) finish loading.");
 	HTML html = new HTML("<div align='center'><img align='center' src='/images/loading.gif' border=0 /></div><p>Please wait momentarily while the necessary component(s) finish loading.");
@@ -21,12 +21,13 @@ public class InformationDialogBox extends DialogBox {
 	startTimer();
     }
 
-    public void messageDialogBox(String titleBarText, String error) {
+    public void messageDialogBox(String titleBarText, String message) {
+	clear();
+	HTML html = new HTML(message);
 	setGlassEnabled(true);
 	setAnimationEnabled(true);
 	setAutoHideEnabled(true);
 	setText(titleBarText);
-	HTML html = new HTML(error);
 	add(html);
 	center();
 	show();

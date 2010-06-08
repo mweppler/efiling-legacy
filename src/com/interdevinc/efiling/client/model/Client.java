@@ -6,6 +6,7 @@ public class Client implements IsSerializable {
 
     private String accountNumber;
     private String clientFullInfo;
+    private String clientFullInfoWRepNumber;
     private String clientID;
     private String firstName;
     private String lastName;
@@ -21,11 +22,15 @@ public class Client implements IsSerializable {
      * CONSTRUCTOR: CLIENT
      * @param an Account Number, fn First Name, ln Last Name
      */    
-    public Client(String an, String fn, String ln) {
+    public Client(String cid, String an, String fn, String ln, String rn) {
 	setAccountNumber(an);
+	setClientID(cid);
 	setFirstName(fn);
 	setLastName(ln);
+	setRepNumber(rn);
+	
 	setClientFullInfo();
+	setClientFullInfoWRepNumber();
     }
     
     /**
@@ -40,6 +45,13 @@ public class Client implements IsSerializable {
      */
     public String getClientFullInfo() {
 	return clientFullInfo;
+    }
+    
+    /**
+     * @return clientFullInfoWRepNumber
+     */
+    public String getClientFullInfoWRepNumber() {
+	return clientFullInfoWRepNumber;
     }
     
     /**
@@ -82,6 +94,13 @@ public class Client implements IsSerializable {
      */
     public void setClientFullInfo() {
 	clientFullInfo = lastName + ", " + firstName + " - " + accountNumber;
+    }
+    
+    /**
+     * clientFullInfoWRepNumber to set
+     */
+    public void setClientFullInfoWRepNumber() {
+	clientFullInfoWRepNumber = lastName + ", " + firstName + " - " + accountNumber + " | " + repNumber;
     }
     
     /**

@@ -83,7 +83,7 @@ public class ClientInformationServiceImpl extends RemoteServiceServlet implement
 	loadedFileCabinet = fc;
 	clientID = cid;
 	
-	final String deleteQuery = "DELETE FROM clientInfo WHERE 'key'='" + clientID + "'";
+	final String deleteQuery = "DELETE FROM clientInfo WHERE `key`='" + clientID + "'";
 	
 	try{
 
@@ -223,7 +223,9 @@ public class ClientInformationServiceImpl extends RemoteServiceServlet implement
      */
     private void updateDocumentType() {
 	
-	final String updateQuery = "UPDATE clientInfo SET acctNum='" + clientAccountNumber + "', lastName='" + clientLastName + "', firstName='" + clientFirstName + "', repNum='" + clientRepNumber + "' WHERE 'key'='" + clientID + "'";
+	final String updateQuery = "UPDATE clientInfo SET acctNum='" + clientAccountNumber + "', lastName='" + clientLastName + "', firstName='" + clientFirstName + "', repNum='" + clientRepNumber + "' WHERE `key`='" + clientID + "'";
+	
+	System.out.println(updateQuery);
 	
 	try{
 

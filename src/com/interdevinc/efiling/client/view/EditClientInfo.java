@@ -71,6 +71,7 @@ public class EditClientInfo implements ChangeHandler, ClickHandler {
 	fileCabinet = fc;
 	mainPanel = mp;
 	searchComponents = sc;
+	idb = new InformationDialogBox();
 	
 	initializeInitialComponents();
 	assembleInitialComponents();
@@ -113,7 +114,10 @@ public class EditClientInfo implements ChangeHandler, ClickHandler {
 	    editClientButton.addClickHandler(this);
 	    deleteClientButton.addClickHandler(this);
 	    
+	} else {
+	    
 	}
+
     }
 
     /**
@@ -126,7 +130,7 @@ public class EditClientInfo implements ChangeHandler, ClickHandler {
 	    if (!clientFirstNameTextbox.getText().equals("") && !clientLastNameTextbox.getText().equals("") && !clientAccountNumberTextbox.getText().equals("") && !clientRepNumberTextbox.getText().equals("")) {
 		clientInformationAsync.addClientInformation(fileCabinet, clientFirstNameTextbox.getText(), clientLastNameTextbox.getText(), clientAccountNumberTextbox.getText(), clientRepNumberTextbox.getText(), addClientInformationHandler);
 	    } else {
-		Window.alert("Please fill in all fields.");
+		idb.messageDialogBox("Missing Information", "Please fill in all fields.");
 	    }
 	}
 
@@ -138,9 +142,11 @@ public class EditClientInfo implements ChangeHandler, ClickHandler {
 	}
 
 	if (event.getSource().equals(editClientButton)) {
-	    if (existingClientListbox.getSelectedIndex() > 0 && !editClientFirstNameTextbox.getText().equals("") && !editClientLastNameTextbox.getText().equals("")) {
+	    if (!editClientAccountNumberTextbox.getText().equals("") && !editClientFirstNameTextbox.getText().equals("") && !editClientLastNameTextbox.getText().equals("") && !editClientRepNumberTextbox.getText().equals("")) {
 		String clientID = searchComponents.getClientList().get(existingClientListbox.getSelectedIndex() - 1).getClientID();
 		clientInformationAsync.editClientInformation(fileCabinet, editClientFirstNameTextbox.getText(), editClientLastNameTextbox.getText(), editClientAccountNumberTextbox.getText(), editClientRepNumberTextbox.getText(), clientID, editClientInformationHandler);
+	    } else {
+		idb.messageDialogBox("Missing Information", "Please fill in all fields.");
 	    }
 	}
 

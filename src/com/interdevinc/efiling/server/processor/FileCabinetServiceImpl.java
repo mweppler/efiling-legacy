@@ -560,7 +560,7 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
      */
     private void loadClientInformation() {
 	
-	final String clientInfoQuery = "SELECT acctNum, firstName, lastName FROM clientInfo ORDER BY lastName";
+	final String clientInfoQuery = "SELECT `key`, acctNum, firstName, lastName, repNum FROM clientInfo ORDER BY lastName";
 
 	ArrayList<Client> clientInfo = new ArrayList<Client>();
 	
@@ -576,7 +576,7 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 
 	    if (results != null) {
 		while (results.next()) {
-		    clientInfo.add(new Client(results.getString(1), results.getString(2), results.getString(3)));
+		    clientInfo.add(new Client(results.getString(1), results.getString(2), results.getString(3), results.getString(4), results.getString(5)));
 		}
 		
 		searchComponents.setClientList(clientInfo);

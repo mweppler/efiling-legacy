@@ -128,6 +128,8 @@ public class EditDocumentTypes implements ChangeHandler, ClickHandler {
 	    if (existingTypeListbox.getSelectedIndex() > 0 && !editDocumentTypeTextbox.getText().equals("") && !editDocumentAbbrTextbox.getText().equals("")) {
 		String documentTypeAbbr = searchComponents.getDocumentTypeList().get(existingTypeListbox.getSelectedIndex() - 1).getDocumentTypeAbbr();
 		documentTypeAsync.editDocumentType(fileCabinet, editDocumentTypeTextbox.getText(), editDocumentAbbrTextbox.getText(), documentTypeAbbr, editDocumentTypeHandler);
+	    } else {
+		idb.messageDialogBox("Missing Information", "Please fill in a Document Type, and Document Abbr.");
 	    }
 	}
 
