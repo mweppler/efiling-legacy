@@ -55,6 +55,13 @@ public class EditDocumentTypes implements ChangeHandler, ClickHandler {
     private EditDocumentTypeHandler editDocumentTypeHandler;
     private DeleteDocumentTypeHandler deleteDocumentTypeHandler;
 
+    /**
+     * CONSTRUCTOR: EDIT DOCUMENT TYPES
+     * @param au the AuthenticatedUser to set
+     * @param fc the FileCabinet to set
+     * @param mp the VerticalPanel to set
+     * @param sc the SearchComponents to set
+     */
     public EditDocumentTypes(AuthenticatedUser au, FileCabinet fc, VerticalPanel mp, SearchComponents sc) {
 	authenticatedUser = au;
 	fileCabinet = fc;
@@ -68,6 +75,9 @@ public class EditDocumentTypes implements ChangeHandler, ClickHandler {
 	initializeRpcWorkers();
     }
 
+    /**
+     * METHOD: ON CHANGE
+     */
     @Override
     public void onChange(ChangeEvent event) {
 
@@ -93,6 +103,9 @@ public class EditDocumentTypes implements ChangeHandler, ClickHandler {
 	}
     }
 
+    /**
+     * METHOD: ON CLICK
+     */
     @Override
     public void onClick(ClickEvent event) {
 
@@ -120,6 +133,9 @@ public class EditDocumentTypes implements ChangeHandler, ClickHandler {
 
     }
 
+    /**
+     * METHOD: ASSEMBLE INITIAL COMPONENTS
+     */
     private void assembleInitialComponents() {
 	addEditTypePanel.add(addTypePanel, "Add Document Type");
 	addEditTypePanel.add(editTypePanel, "Delete/Edit Document Type");
@@ -145,6 +161,9 @@ public class EditDocumentTypes implements ChangeHandler, ClickHandler {
 	mainPanel.add(addEditTypePanel);
     }
 
+    /**
+     * METHOD: INITIALIZE INITIAL COMPONENTS 
+     */
     private void initializeInitialComponents() {
 	addEditTypePanel = new TabPanel();
 	addTypePanel = new VerticalPanel();
@@ -164,7 +183,9 @@ public class EditDocumentTypes implements ChangeHandler, ClickHandler {
 
     }
 
-
+    /**
+     * METHOD: INITIALIZE RPC WORKERS
+     */
     private void initializeRpcWorkers() {
 
 	// Define the service to call  

@@ -55,6 +55,11 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
     public FileCabinetServiceImpl() {
     }
 
+    /**
+     * METHOD: ADD DOCUMENT TYPE
+     * @return resultMessage
+     * Calls checkForDocumentTypeExistance() if no existing document type insertDocumentType().
+     */
     public String addDocumentType(FileCabinet fc, String dtn, String dta) {
 	
 	loadedFileCabinet = fc;
@@ -71,6 +76,11 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 	return resultMessage;
     }
     
+    /**
+     * METHOD: DELETE DOCUMENT TYPE
+     * @return resultMessage
+     * Deletes a catAbbr by catAbbr.
+     */
     public String deleteDocumentType(FileCabinet fc, String dta) {
 	
 	loadedFileCabinet = fc;
@@ -78,16 +88,15 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 	
 	// Table modifiers
 	String tableName = new String();
-//	if (loadedFileCabinet.getCabinetName().equals("Broker Paperwork")) {
-//	    tableName = "brokerDocType";
-//	} else if (loadedFileCabinet.getCabinetName().equals("Client Paperwork")) {
-//	    tableName = "clientDocType";
-//	} else {
-//	    tableName = "";
-//	}
-	tableName = "testDocType";
+	if (loadedFileCabinet.getCabinetName().equals("Broker Paperwork")) {
+	    tableName = "brokerDocType";
+	} else if (loadedFileCabinet.getCabinetName().equals("Client Paperwork")) {
+	    tableName = "clientDocType";
+	} else {
+	    tableName = "";
+	}
 	
-	final String updateQuery = "DELETE FROM " + tableName + " WHERE catAbbr='" + documentTypeAbbr + "'";
+	final String deleteQuery = "DELETE FROM " + tableName + " WHERE catAbbr='" + documentTypeAbbr + "'";
 	
 	try{
 
@@ -96,7 +105,7 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 	    statement = connection.createStatement();
 
 	    //execute statement and retrieve resultSet
-	    int insertedRows = statement.executeUpdate(updateQuery);
+	    int insertedRows = statement.executeUpdate(deleteQuery);
 
 	    if (insertedRows > 0) {
 		resultMessage = new String("Deleted document type: " + documentTypeName + " - " + documentTypeAbbr);
@@ -121,6 +130,11 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 	return resultMessage;
     }
     
+    /**
+     * METHOD: EDIT DOCUMENT TYPE
+     * @return resultMessage
+     * Updates a catName & catAbbr by catAbbr.
+     */
     public String editDocumentType(FileCabinet fc, String dtn, String dta, String dtao) {
 	
 	loadedFileCabinet = fc;
@@ -131,146 +145,6 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 	updateDocumentType();
 	
 	return resultMessage;
-    }
-    
-    private boolean checkForDocumentTypeExistance() {
-	
-	boolean documentTypeExists = false;
-	
-	// Table modifiers
-	String tableName = new String();
-//	if (loadedFileCabinet.getCabinetName().equals("Broker Paperwork")) {
-//	    tableName = "brokerDocType";
-//	} else if (loadedFileCabinet.getCabinetName().equals("Client Paperwork")) {
-//	    tableName = "clientDocType";
-//	} else {
-//	    tableName = "";
-//	}
-	tableName = "testDocType";
-	
-	final String searchQuery = "SELECT catID FROM " + tableName + " WHERE catName='" + documentTypeName + "' AND catAbbr='" + documentTypeAbbr + "'";
-	
-	try{
-
-	    //init connection and statement
-	    connection = getConnection(efilingDatabase, efilingUsernameRead, efilingPasswordRead);
-	    statement = connection.createStatement();
-
-	    //execute statement and retrieve resultSet
-	    statement.execute(searchQuery);
-	    results = statement.getResultSet();
-
-	    if (results.next()) {
-		documentTypeExists = true;
-	    }
-
-	    //close all processing objects
-	    results.close();
-	    statement.close();		
-	    connection.close();
-	    
-	}catch (InstantiationException e){
-	    e.printStackTrace();
-	}catch (IllegalAccessException e){
-	    e.printStackTrace();
-	}catch (ClassNotFoundException e){
-	    e.printStackTrace();
-	}catch (SQLException e){
-	    e.printStackTrace();
-	}
-	
-	return documentTypeExists;
-    }
-    
-    private void insertDocumentType() {
-	
-	// Table modifiers
-	String tableName = new String();
-//	if (loadedFileCabinet.getCabinetName().equals("Broker Paperwork")) {
-//	    tableName = "brokerDocType";
-//	} else if (loadedFileCabinet.getCabinetName().equals("Client Paperwork")) {
-//	    tableName = "clientDocType";
-//	} else {
-//	    tableName = "";
-//	}
-	tableName = "testDocType";
-	
-	final String insertQuery = "INSERT INTO " + tableName + " (catName, catAbbr) VALUES ('" + documentTypeName + "', '" + documentTypeAbbr + "')";
-	
-	try{
-
-	    //init connection and statement
-	    connection = getConnection(efilingDatabase, efilingUsernameRead, efilingPasswordRead);
-	    statement = connection.createStatement();
-
-	    //execute statement and retrieve resultSet
-	    int insertedRows = statement.executeUpdate(insertQuery);
-
-	    if (insertedRows > 0) {
-		resultMessage = new String("Added document type: " + documentTypeName + " - " + documentTypeAbbr);
-	    } else {
-		resultMessage = new String("Error adding document type: " + documentTypeName + " - " + documentTypeAbbr);
-	    }
-	    
-	    //close all processing objects
-	    statement.close();		
-	    connection.close();
-	    
-	}catch (InstantiationException e){
-	    e.printStackTrace();
-	}catch (IllegalAccessException e){
-	    e.printStackTrace();
-	}catch (ClassNotFoundException e){
-	    e.printStackTrace();
-	}catch (SQLException e){
-	    e.printStackTrace();
-	}
-	
-    }
-    
-    private void updateDocumentType() {
-	
-	// Table modifiers
-	String tableName = new String();
-//	if (loadedFileCabinet.getCabinetName().equals("Broker Paperwork")) {
-//	    tableName = "brokerDocType";
-//	} else if (loadedFileCabinet.getCabinetName().equals("Client Paperwork")) {
-//	    tableName = "clientDocType";
-//	} else {
-//	    tableName = "";
-//	}
-	tableName = "testDocType";
-	
-	final String updateQuery = "UPDATE " + tableName + " SET catName='" + documentTypeName + "', catAbbr='" + documentTypeAbbr + "' WHERE catAbbr='" + documentTypeAbbrOld + "'";
-	
-	try{
-
-	    //init connection and statement
-	    connection = getConnection(efilingDatabase, efilingUsernameWrite, efilingPasswordWrite);
-	    statement = connection.createStatement();
-
-	    //execute statement and retrieve resultSet
-	    int updatedRows = statement.executeUpdate(updateQuery);
-
-	    if (updatedRows > 0) {
-		resultMessage = new String("Updated document type: \"" + documentTypeAbbrOld + "\" to: " + documentTypeName + " - " + documentTypeAbbr);
-	    } else {
-		resultMessage = new String("Error updating document type: " + documentTypeName + " - " + documentTypeAbbr);
-	    }
-	    
-	    //close all processing objects
-	    statement.close();		
-	    connection.close();
-	    
-	}catch (InstantiationException e){
-	    e.printStackTrace();
-	}catch (IllegalAccessException e){
-	    e.printStackTrace();
-	}catch (ClassNotFoundException e){
-	    e.printStackTrace();
-	}catch (SQLException e){
-	    e.printStackTrace();
-	}
     }
     
     /**
@@ -403,18 +277,27 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 	
 	return usersFileCabinets;
     }
-
+    
     /**
-     * METHOD: RETRIEVE ALL FILE CABINETS (retrieveUsableFileCabinets)
-     * Checks the users access against the resourceID.
-     * Sets an arraylist of FileCabinet with the users file cabinets.
+     * METHOD: CHECK FOR DOCUMENT TYPE EXISTANCE (addDocumentType)
+     * Checks the document type table for an existing catAbbr. If there is an existing catAbbr, quits and sets the result message.
      */
-    private void retrieveAuthenticatedUsersFileCabinets() {
+    private boolean checkForDocumentTypeExistance() {
 	
-	usersFileCabinets = new ArrayList<FileCabinet>();
+	boolean documentTypeExists = false;
 	
-	final String availableFileCabinetQuery = "SELECT cabinetID, cabinetName, resourceID FROM FilingCabinet";
-
+	// Table modifiers
+	String tableName = new String();
+	if (loadedFileCabinet.getCabinetName().equals("Broker Paperwork")) {
+	    tableName = "brokerDocType";
+	} else if (loadedFileCabinet.getCabinetName().equals("Client Paperwork")) {
+	    tableName = "clientDocType";
+	} else {
+	    tableName = "";
+	}
+	
+	final String searchQuery = "SELECT catID FROM " + tableName + " WHERE catName='" + documentTypeName + "' AND catAbbr='" + documentTypeAbbr + "'";
+	
 	try{
 
 	    //init connection and statement
@@ -422,23 +305,18 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 	    statement = connection.createStatement();
 
 	    //execute statement and retrieve resultSet
-	    statement.execute(availableFileCabinetQuery);
+	    statement.execute(searchQuery);
 	    results = statement.getResultSet();
 
-	    if (results != null) {
-		while (results.next()) {
-		    for (AccessControl accessControl : authenticatedUser.getAccessControl()) {
-			if (accessControl.getResourceID().equals(results.getString(3))) {
-			    usersFileCabinets.add(new FileCabinet(results.getString(1), results.getString(2), results.getString(3)));
-			}
-		    }
-		}
+	    if (results.next()) {
+		documentTypeExists = true;
 	    }
 
 	    //close all processing objects
 	    results.close();
 	    statement.close();		
-
+	    connection.close();
+	    
 	}catch (InstantiationException e){
 	    e.printStackTrace();
 	}catch (IllegalAccessException e){
@@ -448,7 +326,71 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 	}catch (SQLException e){
 	    e.printStackTrace();
 	}
+	
+	return documentTypeExists;
+    }
+    
+    /**
+     * METHOD: CREATE CONNECTION ACCESS RIGHTS (NOT YET IMPLEMENTED)
+     */
+    private void createConnectionAccessRights() {
 
+	for (AccessControl accessControl: authenticatedUser.getAccessControl()) {
+	    if (accessControl.getRoleID().equals("admin")) {
+
+		break;
+	    }
+	}
+
+    }
+    
+    /**
+     * METHOD: INSERT DOCUMENT TYPE (addDocumentType)
+     * Inserts the catName & catAbbr into the document type table. Sets the result message.
+     */
+    private void insertDocumentType() {
+	
+	// Table modifiers
+	String tableName = new String();
+	if (loadedFileCabinet.getCabinetName().equals("Broker Paperwork")) {
+	    tableName = "brokerDocType";
+	} else if (loadedFileCabinet.getCabinetName().equals("Client Paperwork")) {
+	    tableName = "clientDocType";
+	} else {
+	    tableName = "";
+	}
+	
+	final String insertQuery = "INSERT INTO " + tableName + " (catName, catAbbr) VALUES ('" + documentTypeName + "', '" + documentTypeAbbr + "')";
+	
+	try{
+
+	    //init connection and statement
+	    connection = getConnection(efilingDatabase, efilingUsernameRead, efilingPasswordRead);
+	    statement = connection.createStatement();
+
+	    //execute statement and retrieve resultSet
+	    int insertedRows = statement.executeUpdate(insertQuery);
+
+	    if (insertedRows > 0) {
+		resultMessage = new String("Added document type: " + documentTypeName + " - " + documentTypeAbbr);
+	    } else {
+		resultMessage = new String("Error adding document type: " + documentTypeName + " - " + documentTypeAbbr);
+	    }
+	    
+	    //close all processing objects
+	    statement.close();		
+	    connection.close();
+	    
+	}catch (InstantiationException e){
+	    e.printStackTrace();
+	}catch (IllegalAccessException e){
+	    e.printStackTrace();
+	}catch (ClassNotFoundException e){
+	    e.printStackTrace();
+	}catch (SQLException e){
+	    e.printStackTrace();
+	}
+	
     }
     
     /**
@@ -664,14 +606,13 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 	ArrayList<DocumentType> documentTypeInfo = new ArrayList<DocumentType>();
 	
 	String tableName = new String();
-//	if (loadedFileCabinet.getCabinetName().equals("Broker Paperwork")) {
-//	    databaseName = "brokerDocType";
-//	} else if (loadedFileCabinet.getCabinetName().equals("Client Paperwork")) {
-//	    databaseName = "clientDocType";
-//	} else {
-//	    databaseName = "";
-//	}
-	tableName = "testDocType";
+	if (loadedFileCabinet.getCabinetName().equals("Broker Paperwork")) {
+	    tableName = "brokerDocType";
+	} else if (loadedFileCabinet.getCabinetName().equals("Client Paperwork")) {
+	    tableName = "clientDocType";
+	} else {
+	    tableName = "";
+	}
 	
 	final String documentTypeInfoQuery = "SELECT catID, catName, catAbbr FROM " + tableName + " ORDER BY catName";
 
@@ -710,19 +651,100 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 	}
 	
     }
-    
+
     /**
-     * METHOD: CREATE CONNECTION ACCESS RIGHTS (NOT YET IMPLEMENTED)
+     * METHOD: RETRIEVE ALL FILE CABINETS (retrieveUsableFileCabinets)
+     * Checks the users access against the resourceID.
+     * Sets an arraylist of FileCabinet with the users file cabinets.
      */
-    private void createConnectionAccessRights() {
+    private void retrieveAuthenticatedUsersFileCabinets() {
+	
+	usersFileCabinets = new ArrayList<FileCabinet>();
+	
+	final String availableFileCabinetQuery = "SELECT cabinetID, cabinetName, resourceID FROM FilingCabinet";
 
-	for (AccessControl accessControl: authenticatedUser.getAccessControl()) {
-	    if (accessControl.getRoleID().equals("admin")) {
+	try{
 
-		break;
+	    //init connection and statement
+	    connection = getConnection(efilingDatabase, efilingUsernameRead, efilingPasswordRead);
+	    statement = connection.createStatement();
+
+	    //execute statement and retrieve resultSet
+	    statement.execute(availableFileCabinetQuery);
+	    results = statement.getResultSet();
+
+	    if (results != null) {
+		while (results.next()) {
+		    for (AccessControl accessControl : authenticatedUser.getAccessControl()) {
+			if (accessControl.getResourceID().equals(results.getString(3))) {
+			    usersFileCabinets.add(new FileCabinet(results.getString(1), results.getString(2), results.getString(3)));
+			}
+		    }
+		}
 	    }
+
+	    //close all processing objects
+	    results.close();
+	    statement.close();		
+
+	}catch (InstantiationException e){
+	    e.printStackTrace();
+	}catch (IllegalAccessException e){
+	    e.printStackTrace();
+	}catch (ClassNotFoundException e){
+	    e.printStackTrace();
+	}catch (SQLException e){
+	    e.printStackTrace();
 	}
 
+    }
+    
+    /**
+     * METHOD: UPDATE DOCUMENT TYPE (editDocumentType)
+     * Updates the catName & catAbbr where the old category abbr. Sets the result message.
+     */
+    private void updateDocumentType() {
+	
+	// Table modifiers
+	String tableName = new String();
+	if (loadedFileCabinet.getCabinetName().equals("Broker Paperwork")) {
+	    tableName = "brokerDocType";
+	} else if (loadedFileCabinet.getCabinetName().equals("Client Paperwork")) {
+	    tableName = "clientDocType";
+	} else {
+	    tableName = "";
+	}
+	
+	final String updateQuery = "UPDATE " + tableName + " SET catName='" + documentTypeName + "', catAbbr='" + documentTypeAbbr + "' WHERE catAbbr='" + documentTypeAbbrOld + "'";
+	
+	try{
+
+	    //init connection and statement
+	    connection = getConnection(efilingDatabase, efilingUsernameWrite, efilingPasswordWrite);
+	    statement = connection.createStatement();
+
+	    //execute statement and retrieve resultSet
+	    int updatedRows = statement.executeUpdate(updateQuery);
+
+	    if (updatedRows > 0) {
+		resultMessage = new String("Updated document type: \"" + documentTypeAbbrOld + "\" to: " + documentTypeName + " - " + documentTypeAbbr);
+	    } else {
+		resultMessage = new String("Error updating document type: " + documentTypeName + " - " + documentTypeAbbr);
+	    }
+	    
+	    //close all processing objects
+	    statement.close();		
+	    connection.close();
+	    
+	}catch (InstantiationException e){
+	    e.printStackTrace();
+	}catch (IllegalAccessException e){
+	    e.printStackTrace();
+	}catch (ClassNotFoundException e){
+	    e.printStackTrace();
+	}catch (SQLException e){
+	    e.printStackTrace();
+	}
     }
 
     /**
@@ -737,5 +759,5 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 	Class.forName("com.mysql.jdbc.Driver").newInstance();
 	return DriverManager.getConnection(url, username, password);
     }
-
+    
 }
