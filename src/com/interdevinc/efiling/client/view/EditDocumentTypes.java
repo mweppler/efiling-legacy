@@ -113,7 +113,7 @@ public class EditDocumentTypes implements ChangeHandler, ClickHandler {
 	    if (!documentTypeTextbox.getText().equals("") && !documentAbbrTextbox.getText().equals("")) {
 		documentTypeAsync.addDocumentType(fileCabinet, documentTypeTextbox.getText(), documentAbbrTextbox.getText(), addDocumentTypeHandler);
 	    } else {
-		Window.alert("Please fill in a Document Type, and Document Abbr.");
+		idb.messageDialogBox("Missing Information", "Please fill in a Document Type, and Document Abbr.");
 	    }
 	}
 
@@ -222,7 +222,7 @@ public class EditDocumentTypes implements ChangeHandler, ClickHandler {
 	@Override
 	public void onSuccess(String resultMessage) {
 	    loadFileCabinetView(fileCabinet);
-	    idb.errorMessageDialogBox("Add Document Type" , resultMessage);
+	    idb.messageDialogBox("Add Document Type" , resultMessage);
 	}
 
     }
@@ -241,7 +241,7 @@ public class EditDocumentTypes implements ChangeHandler, ClickHandler {
 	@Override
 	public void onSuccess(String resultMessage) {
 	    loadFileCabinetView(fileCabinet);
-	    idb.errorMessageDialogBox("Delete Document Type" , resultMessage);
+	    idb.messageDialogBox("Delete Document Type" , resultMessage);
 	}
 
     }
@@ -260,7 +260,7 @@ public class EditDocumentTypes implements ChangeHandler, ClickHandler {
 	@Override
 	public void onSuccess(String resultMessage) {
 	    loadFileCabinetView(fileCabinet);
-	    idb.errorMessageDialogBox("Edit Document Type" , resultMessage);
+	    idb.messageDialogBox("Edit Document Type" , resultMessage);
 	}
 
     }

@@ -25,6 +25,7 @@ public class UploadDocument implements ClickHandler, FormPanel.SubmitCompleteHan
     private AuthenticatedUser authenticatedUser;
     private FileCabinet fileCabinet;
     private SearchComponents searchComponents;
+    private InformationDialogBox idb;
 
     // Panels
     private VerticalPanel mainPanel;
@@ -53,6 +54,7 @@ public class UploadDocument implements ClickHandler, FormPanel.SubmitCompleteHan
 	fileCabinet = fc;
 	searchComponents = sc;
 	mainPanel = mp;
+	idb = new InformationDialogBox();
 
 	initializeInitialComponents();
 	assembleInitialComponents();
@@ -72,20 +74,20 @@ public class UploadDocument implements ClickHandler, FormPanel.SubmitCompleteHan
      */
     public void onSubmit(SubmitEvent event) {
 
-	if (associatedWithListbox.getSelectedIndex() <= 0) {
-	    Window.alert("Please choose who the file is associated.");
+	if (associatedWithListbox.getSelectedIndex() <= 0 || documentTypeListbox.getSelectedIndex() <= 0 || fileUploadWidget.getFilename().equals("")) {
+	    idb.messageDialogBox("Missing Information", "Please fill in all fields.");
 	    event.cancel();
 	}
 
-	if (documentTypeListbox.getSelectedIndex() <= 0) {
-	    Window.alert("Please choose a Document Type.");
-	    event.cancel();
-	}
-
-	if (fileUploadWidget.getFilename().equals("")) {
-	    Window.alert("Please select a file to upload.");
-	    event.cancel();
-	}
+//	if (documentTypeListbox.getSelectedIndex() <= 0) {
+//	    Window.alert("Please choose a Document Type.");
+//	    event.cancel();
+//	}
+//
+//	if (fileUploadWidget.getFilename().equals("")) {
+//	    Window.alert("Please select a file to upload.");
+//	    event.cancel();
+//	}
 
 	if (!event.isCanceled()) {
 
@@ -114,7 +116,7 @@ public class UploadDocument implements ClickHandler, FormPanel.SubmitCompleteHan
      */
     public void onSubmitComplete(SubmitCompleteEvent event) {
 	InformationDialogBox idb = new InformationDialogBox();
-	idb.errorMessageDialogBox("File Upload Result", event.getResults());
+	idb.messageDialogBox("File Upload Result", event.getResults());
     }
 
     /**

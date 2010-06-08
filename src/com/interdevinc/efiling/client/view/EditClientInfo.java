@@ -243,7 +243,7 @@ public class EditClientInfo implements ChangeHandler, ClickHandler {
 	@Override
 	public void onSuccess(String resultMessage) {
 	    loadFileCabinetView(fileCabinet);
-	    idb.errorMessageDialogBox("Add Client" , resultMessage);
+	    idb.messageDialogBox("Add Client" , resultMessage);
 	}
 
     }
@@ -262,7 +262,7 @@ public class EditClientInfo implements ChangeHandler, ClickHandler {
 	@Override
 	public void onSuccess(String resultMessage) {
 	    loadFileCabinetView(fileCabinet);
-	    idb.errorMessageDialogBox("Delete Client" , resultMessage);
+	    idb.messageDialogBox("Delete Client" , resultMessage);
 	}
 
     }
@@ -281,7 +281,7 @@ public class EditClientInfo implements ChangeHandler, ClickHandler {
 	@Override
 	public void onSuccess(String resultMessage) {
 	    loadFileCabinetView(fileCabinet);
-	    idb.errorMessageDialogBox("Edit Client" , resultMessage);
+	    idb.messageDialogBox("Edit Client" , resultMessage);
 	}
 
     }

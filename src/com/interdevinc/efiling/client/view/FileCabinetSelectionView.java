@@ -127,7 +127,7 @@ public class FileCabinetSelectionView {
 	@Override
 	public void onFailure(Throwable caught) {
 	    idb.destroyTimer();
-	    idb.errorMessageDialogBox("RPC Failure" , "File Cabinet Selection RPC Failure");
+	    idb.messageDialogBox("RPC Failure" , "File Cabinet Selection RPC Failure");
 	}
 
 	@Override

@@ -133,7 +133,7 @@ public class FileCabinetView {
 	@Override
 	public void onFailure(Throwable caught) {
 	    idb.destroyTimer();
-	    idb.errorMessageDialogBox("RPC Failure" , "Load Search Components RPC Failure");
+	    idb.messageDialogBox("RPC Failure" , "Load Search Components RPC Failure");
 	}
 
 	@Override

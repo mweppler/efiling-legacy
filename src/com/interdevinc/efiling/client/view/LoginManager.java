@@ -19,9 +19,14 @@ import com.interdevinc.efiling.client.model.AuthenticatedUser;
 import com.interdevinc.efiling.client.processor.AuthenticationService;
 import com.interdevinc.efiling.client.processor.AuthenticationServiceAsync;
 import com.interdevinc.efiling.shared.processor.Hash;
+import com.interdevinc.efiling.shared.view.InformationDialogBox;
 
 public class LoginManager implements ClickHandler,KeyPressHandler {
 
+    // Components
+    private AuthenticatedUser authenticatedUser;
+    private InformationDialogBox idb;
+    
     // Login fields
     private FlexTable loginFieldsTable;
     private Image userImg;
@@ -33,14 +38,13 @@ public class LoginManager implements ClickHandler,KeyPressHandler {
     // RPC objects
     private AuthenticationServiceAsync authentication;
     private AuthenticationHandler authenticationHandler;
-
-    // Authenticated User
-    private AuthenticatedUser authenticatedUser;
     
     /**
      * CONSTRUCTOR: LOGIN MANAGER
      */
     public LoginManager() {
+	idb = new InformationDialogBox();
+	
 	initializeComponents();
 	initializeRemoteProcedureWorkers();
 	assembleComponents();
@@ -61,7 +65,7 @@ public class LoginManager implements ClickHandler,KeyPressHandler {
 	    authentication.authenticateUser(username, password, authenticationHandler);
 	}else{
 	    //display error
-	    Window.alert("Please fill all form fields!");
+	    idb.messageDialogBox("Missing Information", "Please fill all form fields!");
 	}
     }
 
@@ -194,7 +198,7 @@ public class LoginManager implements ClickHandler,KeyPressHandler {
 		setAuthenticatedUser(user);
 		History.newItem("UserAuthenticated");
 	    }else{
-		Window.alert("Username/Password pair not found.");
+		idb.messageDialogBox("Login Issue", "Username/Password pair not found.");
 	    }				
 	}
 
@@ -202,7 +206,7 @@ public class LoginManager implements ClickHandler,KeyPressHandler {
 	 * METHOD:	ON FAILURE
 	 * @param ex - exception throw on RPC failure */
 	public void onFailure(Throwable ex){
-	    Window.alert("An error has occurred. \n Please contact your administrator.");
+	    idb.messageDialogBox("RPC Failure", "An error has occurred. \n Please contact your administrator.");
 	}
     }
 }

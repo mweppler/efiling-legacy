@@ -7,17 +7,6 @@ import com.google.gwt.user.client.ui.HTML;
 public class InformationDialogBox extends DialogBox {
 
     private Timer loadingTimer;
-
-    public void errorMessageDialogBox(String titleBarText, String error) {
-	setGlassEnabled(true);
-	setAnimationEnabled(true);
-	setAutoHideEnabled(true);
-	setTitle(titleBarText);
-	HTML html = new HTML(error);
-	add(html);
-	center();
-	show();
-    }
     
     public void loadingDialogBox(String text) {
 	setGlassEnabled(true);
@@ -32,6 +21,17 @@ public class InformationDialogBox extends DialogBox {
 	startTimer();
     }
 
+    public void messageDialogBox(String titleBarText, String error) {
+	setGlassEnabled(true);
+	setAnimationEnabled(true);
+	setAutoHideEnabled(true);
+	setText(titleBarText);
+	HTML html = new HTML(error);
+	add(html);
+	center();
+	show();
+    }
+    
     private void startTimer() {
 	loadingTimer = new Timer() {
 	    public void run() {
