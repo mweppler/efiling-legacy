@@ -10,6 +10,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -19,6 +20,7 @@ import com.interdevinc.efiling.client.model.FileCabinet;
 import com.interdevinc.efiling.client.model.SearchComponents;
 import com.interdevinc.efiling.client.processor.FileCabinetService;
 import com.interdevinc.efiling.client.processor.FileCabinetServiceAsync;
+import com.interdevinc.efiling.shared.view.InformationDialogBox;
 
 public class EditDocumentTypes implements ChangeHandler, ClickHandler {
 
@@ -28,11 +30,11 @@ public class EditDocumentTypes implements ChangeHandler, ClickHandler {
 
     // Panels
     private VerticalPanel mainPanel;
-
     private TabPanel addEditTypePanel;
     private  VerticalPanel addTypePanel;
     private VerticalPanel editTypePanel;
-
+    private InformationDialogBox idb;
+    
     // Add Document Type Componenets
     private FlexTable addComponentsTable;
     private TextBox documentTypeTextbox;
@@ -58,7 +60,8 @@ public class EditDocumentTypes implements ChangeHandler, ClickHandler {
 	fileCabinet = fc;
 	mainPanel = mp;
 	searchComponents = sc;
-
+	idb = new InformationDialogBox();
+	    
 	initializeInitialComponents();
 	assembleInitialComponents();
 
@@ -175,6 +178,16 @@ public class EditDocumentTypes implements ChangeHandler, ClickHandler {
     }
 
     /**
+     * METHOD: LOAD FILE CABINET VIEW
+     * Loads the file cabinet view.
+     */
+    private void loadFileCabinetView(FileCabinet fileCabinet) {
+	RootPanel.get("main-container").clear();
+	FileCabinetView fileCabinetView = new FileCabinetView(authenticatedUser, fileCabinet);
+	RootPanel.get("main-container").add(fileCabinetView.showView());
+    }
+    
+    /**
      * PRIVATE CLASS: ADD DOCUMENT TYPE HANDLER
      * @author mweppler
      * GWT AsyncCallback
@@ -187,7 +200,8 @@ public class EditDocumentTypes implements ChangeHandler, ClickHandler {
 
 	@Override
 	public void onSuccess(String resultMessage) {
-	    Window.alert(resultMessage);
+	    loadFileCabinetView(fileCabinet);
+	    idb.errorMessageDialogBox("Add Document Type" , resultMessage);
 	}
 
     }
@@ -205,7 +219,8 @@ public class EditDocumentTypes implements ChangeHandler, ClickHandler {
 
 	@Override
 	public void onSuccess(String resultMessage) {
-	    Window.alert(resultMessage);
+	    loadFileCabinetView(fileCabinet);
+	    idb.errorMessageDialogBox("Delete Document Type" , resultMessage);
 	}
 
     }
@@ -223,7 +238,8 @@ public class EditDocumentTypes implements ChangeHandler, ClickHandler {
 
 	@Override
 	public void onSuccess(String resultMessage) {
-	    Window.alert(resultMessage);
+	    loadFileCabinetView(fileCabinet);
+	    idb.errorMessageDialogBox("Edit Document Type" , resultMessage);
 	}
 
     }

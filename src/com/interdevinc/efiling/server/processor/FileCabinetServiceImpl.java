@@ -66,17 +66,71 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 	    return "A document type: " + documentTypeAbbr + " already exists.";
 	}
 	
-	insertDocumentTypeIntoDatabase();
+	insertDocumentType();
 	
 	return resultMessage;
     }
     
-    public String deleteDocumentType(FileCabinet fc, String documentTypeAbbr) {
-	return "Tried to delete document type: " + documentTypeAbbr;
+    public String deleteDocumentType(FileCabinet fc, String dta) {
+	
+	loadedFileCabinet = fc;
+	documentTypeAbbr = dta;
+	
+	// Table modifiers
+	String tableName = new String();
+//	if (loadedFileCabinet.getCabinetName().equals("Broker Paperwork")) {
+//	    tableName = "brokerDocType";
+//	} else if (loadedFileCabinet.getCabinetName().equals("Client Paperwork")) {
+//	    tableName = "clientDocType";
+//	} else {
+//	    tableName = "";
+//	}
+	tableName = "testDocType";
+	
+	final String updateQuery = "DELETE FROM " + tableName + " WHERE catAbbr='" + documentTypeAbbr + "'";
+	
+	try{
+
+	    //init connection and statement
+	    connection = getConnection(efilingDatabase, efilingUsernameWrite, efilingPasswordWrite);
+	    statement = connection.createStatement();
+
+	    //execute statement and retrieve resultSet
+	    int insertedRows = statement.executeUpdate(updateQuery);
+
+	    if (insertedRows > 0) {
+		resultMessage = new String("Deleted document type: " + documentTypeName + " - " + documentTypeAbbr);
+	    } else {
+		resultMessage = new String("Error deleting document type: " + documentTypeName + " - " + documentTypeAbbr);
+	    }
+	    
+	    //close all processing objects
+	    statement.close();		
+	    connection.close();
+	    
+	}catch (InstantiationException e){
+	    e.printStackTrace();
+	}catch (IllegalAccessException e){
+	    e.printStackTrace();
+	}catch (ClassNotFoundException e){
+	    e.printStackTrace();
+	}catch (SQLException e){
+	    e.printStackTrace();
+	}
+	
+	return resultMessage;
     }
     
-    public String editDocumentType(FileCabinet fc, String documentTypeName, String documentTypeAbbr, String documentTypeAbbrOld) {
-	return "Tried to edit document type: " + "\"" + documentTypeAbbrOld + "\"" + " to: " + documentTypeName + " - " + documentTypeAbbr;
+    public String editDocumentType(FileCabinet fc, String dtn, String dta, String dtao) {
+	
+	loadedFileCabinet = fc;
+	documentTypeName = dtn;
+	documentTypeAbbr = dta;
+	documentTypeAbbrOld = dtao;
+	
+	updateDocumentType();
+	
+	return resultMessage;
     }
     
     private boolean checkForDocumentTypeExistance() {
@@ -85,13 +139,14 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 	
 	// Table modifiers
 	String tableName = new String();
-	if (loadedFileCabinet.getCabinetName().equals("Broker Paperwork")) {
-	    tableName = "brokerDocType";
-	} else if (loadedFileCabinet.getCabinetName().equals("Client Paperwork")) {
-	    tableName = "clientDocType";
-	} else {
-	    tableName = "";
-	}
+//	if (loadedFileCabinet.getCabinetName().equals("Broker Paperwork")) {
+//	    tableName = "brokerDocType";
+//	} else if (loadedFileCabinet.getCabinetName().equals("Client Paperwork")) {
+//	    tableName = "clientDocType";
+//	} else {
+//	    tableName = "";
+//	}
+	tableName = "testDocType";
 	
 	final String searchQuery = "SELECT catID FROM " + tableName + " WHERE catName='" + documentTypeName + "' AND catAbbr='" + documentTypeAbbr + "'";
 	
@@ -127,17 +182,18 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 	return documentTypeExists;
     }
     
-    private void insertDocumentTypeIntoDatabase() {
+    private void insertDocumentType() {
 	
 	// Table modifiers
 	String tableName = new String();
-	if (loadedFileCabinet.getCabinetName().equals("Broker Paperwork")) {
-	    tableName = "brokerDocType";
-	} else if (loadedFileCabinet.getCabinetName().equals("Client Paperwork")) {
-	    tableName = "clientDocType";
-	} else {
-	    tableName = "";
-	}
+//	if (loadedFileCabinet.getCabinetName().equals("Broker Paperwork")) {
+//	    tableName = "brokerDocType";
+//	} else if (loadedFileCabinet.getCabinetName().equals("Client Paperwork")) {
+//	    tableName = "clientDocType";
+//	} else {
+//	    tableName = "";
+//	}
+	tableName = "testDocType";
 	
 	final String insertQuery = "INSERT INTO " + tableName + " (catName, catAbbr) VALUES ('" + documentTypeName + "', '" + documentTypeAbbr + "')";
 	
@@ -170,6 +226,51 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 	    e.printStackTrace();
 	}
 	
+    }
+    
+    private void updateDocumentType() {
+	
+	// Table modifiers
+	String tableName = new String();
+//	if (loadedFileCabinet.getCabinetName().equals("Broker Paperwork")) {
+//	    tableName = "brokerDocType";
+//	} else if (loadedFileCabinet.getCabinetName().equals("Client Paperwork")) {
+//	    tableName = "clientDocType";
+//	} else {
+//	    tableName = "";
+//	}
+	tableName = "testDocType";
+	
+	final String updateQuery = "UPDATE " + tableName + " SET catName='" + documentTypeName + "', catAbbr='" + documentTypeAbbr + "' WHERE catAbbr='" + documentTypeAbbrOld + "'";
+	
+	try{
+
+	    //init connection and statement
+	    connection = getConnection(efilingDatabase, efilingUsernameWrite, efilingPasswordWrite);
+	    statement = connection.createStatement();
+
+	    //execute statement and retrieve resultSet
+	    int updatedRows = statement.executeUpdate(updateQuery);
+
+	    if (updatedRows > 0) {
+		resultMessage = new String("Updated document type: \"" + documentTypeAbbrOld + "\" to: " + documentTypeName + " - " + documentTypeAbbr);
+	    } else {
+		resultMessage = new String("Error updating document type: " + documentTypeName + " - " + documentTypeAbbr);
+	    }
+	    
+	    //close all processing objects
+	    statement.close();		
+	    connection.close();
+	    
+	}catch (InstantiationException e){
+	    e.printStackTrace();
+	}catch (IllegalAccessException e){
+	    e.printStackTrace();
+	}catch (ClassNotFoundException e){
+	    e.printStackTrace();
+	}catch (SQLException e){
+	    e.printStackTrace();
+	}
     }
     
     /**
@@ -562,16 +663,17 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 
 	ArrayList<DocumentType> documentTypeInfo = new ArrayList<DocumentType>();
 	
-	String databaseName = new String();
-	if (loadedFileCabinet.getCabinetName().equals("Broker Paperwork")) {
-	    databaseName = "brokerDocType";
-	} else if (loadedFileCabinet.getCabinetName().equals("Client Paperwork")) {
-	    databaseName = "clientDocType";
-	} else {
-	    databaseName = "";
-	}
+	String tableName = new String();
+//	if (loadedFileCabinet.getCabinetName().equals("Broker Paperwork")) {
+//	    databaseName = "brokerDocType";
+//	} else if (loadedFileCabinet.getCabinetName().equals("Client Paperwork")) {
+//	    databaseName = "clientDocType";
+//	} else {
+//	    databaseName = "";
+//	}
+	tableName = "testDocType";
 	
-	final String documentTypeInfoQuery = "SELECT catID, catName, catAbbr FROM " + databaseName + " ORDER BY catName";
+	final String documentTypeInfoQuery = "SELECT catID, catName, catAbbr FROM " + tableName + " ORDER BY catName";
 
 	try{
 
@@ -609,6 +711,9 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 	
     }
     
+    /**
+     * METHOD: CREATE CONNECTION ACCESS RIGHTS (NOT YET IMPLEMENTED)
+     */
     private void createConnectionAccessRights() {
 
 	for (AccessControl accessControl: authenticatedUser.getAccessControl()) {
