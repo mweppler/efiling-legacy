@@ -20,7 +20,10 @@ import com.interdevinc.efiling.client.processor.FileCabinetService;
 
 public class FileCabinetServiceImpl extends RemoteServiceServlet implements FileCabinetService {
 
-    private static final long serialVersionUID = 1L;
+    /**
+     * The serializable class FileCabinetServiceImpl needs a static final serialVersionUID field of type long.
+     */
+    private static final long serialVersionUID = 1642153038873292865L;
 
     private final String host = "jdbc:mysql://192.168.11.6/";
     
@@ -365,7 +368,7 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 	try{
 
 	    //init connection and statement
-	    connection = getConnection(efilingDatabase, efilingUsernameRead, efilingPasswordRead);
+	    connection = getConnection(efilingDatabase, efilingUsernameWrite, efilingPasswordWrite);
 	    statement = connection.createStatement();
 
 	    //execute statement and retrieve resultSet

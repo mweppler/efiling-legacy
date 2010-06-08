@@ -31,7 +31,7 @@ public class EditDocumentTypes implements ChangeHandler, ClickHandler {
     // Panels
     private VerticalPanel mainPanel;
     private TabPanel addEditTypePanel;
-    private  VerticalPanel addTypePanel;
+    private VerticalPanel addTypePanel;
     private VerticalPanel editTypePanel;
     private InformationDialogBox idb;
     

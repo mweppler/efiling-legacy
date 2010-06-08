@@ -31,7 +31,10 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 public class FileUploadServlet extends HttpServlet {
 
-    private static final long serialVersionUID = 2784253025320124570L;
+    /**
+     * The serializable class FileUploadServlet needs a static final serialVersionUID field of type long.
+     */
+    private static final long serialVersionUID = -8048716200519402624L;
 
     private final String host = "jdbc:mysql://192.168.11.6/";
 

@@ -22,7 +22,10 @@ import com.interdevinc.efiling.client.model.ScannedDocument;
 
 public class FileDownloadServlet extends HttpServlet {
 
-    private static final long serialVersionUID = 2784253025320124570L;
+    /**
+     * The serializable class FileDownloadServlet needs a static final serialVersionUID field of type long.
+     */
+    private static final long serialVersionUID = -5892158287193293449L;
 
     private final String host = "jdbc:mysql://192.168.11.6/";
 

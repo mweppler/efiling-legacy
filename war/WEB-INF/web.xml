@@ -7,6 +7,16 @@
 
 	<!-- Servlets -->
 
+	<!-- Client Information Servlet -->
+	<servlet>
+		<servlet-name>clientInformationServiceImpl</servlet-name>
+		<servlet-class>com.interdevinc.efiling.server.processor.ClientInformationServiceImpl</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>clientInformationServiceImpl</servlet-name>
+		<url-pattern>/efiling/clientinformation</url-pattern>
+	</servlet-mapping>
+
 	<!-- File Cabinet Servlet -->
 	<servlet>
 		<servlet-name>fileCabinetServiceImpl</servlet-name>

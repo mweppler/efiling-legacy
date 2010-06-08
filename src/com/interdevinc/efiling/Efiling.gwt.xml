@@ -23,6 +23,7 @@
 
   <!--  Servlets                                                  -->
   <servlet class="com.interdevinc.efiling.server.processor.AuthenticationServiceImpl" path="/authentication" />
+  <servlet class="com.interdevinc.efiling.server.processor.ClientInformationServiceImpl" path="/clientinformation" />
   <servlet class="com.interdevinc.efiling.server.processor.FileCabinetServiceImpl" path="/filecabinet" />
   <servlet class="com.interdevinc.efiling.server.processor.FileDownloadServlet" path="/filedownload" />
   <servlet class="com.interdevinc.efiling.server.processor.FileUploadServlet" path="/fileupload" />
