@@ -7,8 +7,8 @@ import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Image;
@@ -152,6 +152,9 @@ public class LoginManager implements ClickHandler,KeyPressHandler {
 	//define the service to call  
 	authentication = (AuthenticationServiceAsync) GWT.create(AuthenticationService.class);    
 
+//	ServiceDefTarget endpoint = (ServiceDefTarget)authentication;
+//      endpoint.setServiceEntryPoint("/authentication");
+        
 	//init RPC handler
 	authenticationHandler = new AuthenticationHandler();
     }

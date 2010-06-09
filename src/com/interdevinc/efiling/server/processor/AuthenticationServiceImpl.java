@@ -57,6 +57,8 @@ public class AuthenticationServiceImpl extends RemoteServiceServlet implements A
 	//query statement
 	final String userQuery = "SELECT userid, username, emailAddress FROM users WHERE (username='"+u+"' AND password='"+p+"')";
 
+	//System.out.println("AuthQuery: " + userQuery); //Debug Statement
+	
 	try{
 
 	    //init connection and statement

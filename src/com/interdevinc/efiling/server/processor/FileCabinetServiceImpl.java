@@ -190,6 +190,7 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 	loadDocumentTypeInformation();
 	
 	return searchComponents;
+	
     }
     
     /**
@@ -561,7 +562,7 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
     private void loadClientInformation() {
 	
 	final String clientInfoQuery = "SELECT `key`, acctNum, firstName, lastName, repNum FROM clientInfo ORDER BY lastName";
-
+	
 	ArrayList<Client> clientInfo = new ArrayList<Client>();
 	
 	try{
@@ -635,7 +636,6 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 		}
 		
 		searchComponents.setDocumentTypeList(documentTypeInfo);
-		
 	    }
 
 	    //close all processing objects

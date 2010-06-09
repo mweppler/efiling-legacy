@@ -40,9 +40,9 @@ public class FileCabinetView {
 	authenticatedUser = au;
 	fileCabinet = fc;
 	mainPanel = new VerticalPanel();
-
 	idb = new InformationDialogBox();
 	idb.loadingDialogBox("Loading Contents into " + fileCabinet.getCabinetName());
+	
 	initializeRemoteProcedureWorkers();
 	
     }
@@ -76,10 +76,10 @@ public class FileCabinetView {
      * METHOD: INITIALIZE COMPONENTS
      * Initializes initial components
      */
+    @SuppressWarnings("unused")
     private void initializeComponents() {
 
 	taskTabPanel = new DecoratedTabPanel();
-//	taskTabPanel.setWidth("700px");
 	taskTabPanel.setAnimationEnabled(true);
 
 	searchDocumentsPanel = new VerticalPanel();
@@ -111,7 +111,7 @@ public class FileCabinetView {
 	
 	//execute authentication procedure
 	fileCabinetAsync.retrieveSearchComponents(fileCabinet, searchComponentsHandler);
-	    
+	
     }
     
     /**

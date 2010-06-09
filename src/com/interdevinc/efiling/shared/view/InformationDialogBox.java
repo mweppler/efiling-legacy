@@ -9,6 +9,7 @@ public class InformationDialogBox extends DialogBox {
     private Timer loadingTimer;
     
     public void loadingDialogBox(String titleBarText) {
+	clear();
 	setGlassEnabled(true);
 	setAnimationEnabled(true);
 	setText(titleBarText);
