@@ -184,7 +184,7 @@ public class SearchDocuments implements ChangeHandler {
 	++row;
 
 	for (ScannedDocument scannedDocument : scannedDocuments) {
-	    String link = GWT.getModuleBaseURL() + "filedownload?cabinet=" + cabinetType + "&uploadID=" + scannedDocument.getUploadID(); 
+	    String link = GWT.getModuleBaseURL() + "filedownload?user="+authenticatedUser.getUsername()+"&cabinet=" + cabinetType + "&uploadID=" + scannedDocument.getUploadID(); 
 	    HTML pdfFileName = new HTML();
 	    String htmlString = "<a href='" + link + "'><img src='" + GWT.getHostPageBaseURL() + "images/pdfImage.gif' width='20px' height='20px' align='center' border='0'>" + scannedDocument.getFileName() + "</a>";
 	    pdfFileName.setHTML(htmlString);

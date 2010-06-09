@@ -55,6 +55,40 @@ public class FileDownloadServlet extends HttpServlet {
     }
 
     /**
+     * METHOD: LOG FILE DOWNLOAD
+     */
+    private void logFileDownload(boolean wasDownloaded) {
+	
+	int status;
+	
+	if (wasDownloaded) {
+	    status = 1;
+	} else {
+	    status = 0;
+	}
+	
+	final String logQuery = "INSERT INTO UsageLog (`user`, `resource`, `action`, `status`) VALUES ('"+request.getParameter("user")+"', 'efiling', 'download_"+request.getParameter("cabinet")+"_"+scannedDocument.getUploadID()+"', '"+status+"')";
+
+	try{
+
+	    //init connection and statement
+	    connection = DatabaseConnectionService.retrieveDatabaseConnection("efilingsys", "WRITE");
+	    statement = connection.createStatement();
+
+	    //execute statement and retrieve resultSet
+	    statement.executeUpdate(logQuery);
+
+	    //close all processing objects
+	    statement.close();		
+	    connection.close();
+
+	}catch (SQLException e){
+	    e.printStackTrace();
+	}
+	
+    }
+    
+    /**
      * METHOD: RETRIEVE REQUESTED FILE INFORMATION
      * Queries database for file information, which is used by sendRequestedFile();
      */
@@ -143,10 +177,14 @@ public class FileDownloadServlet extends HttpServlet {
 	    outputStream.flush(); 
 	    outputStream.close(); 
 
+	    logFileDownload(true);
+	    
 	} catch (FileNotFoundException e) {
 	    e.printStackTrace();
+	    logFileDownload(false);
 	} catch (IOException e) {
 	    e.printStackTrace();
+	    logFileDownload(false);
 	} 
     }
     
