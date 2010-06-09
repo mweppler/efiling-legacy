@@ -113,7 +113,7 @@ public class EditDocumentTypes implements ChangeHandler, ClickHandler {
 	    if (!documentTypeTextbox.getText().equals("") && !documentAbbrTextbox.getText().equals("")) {
 		documentTypeAsync.addDocumentType(fileCabinet, documentTypeTextbox.getText(), documentAbbrTextbox.getText(), addDocumentTypeHandler);
 	    } else {
-		idb.messageDialogBox("Missing Information", "Please fill in a Document Type, and Document Abbr.");
+		idb.messageDialogBox(1, "Missing Information", "Please fill in a Document Type, and Document Abbr.");
 	    }
 	}
 
@@ -129,7 +129,7 @@ public class EditDocumentTypes implements ChangeHandler, ClickHandler {
 		String documentTypeAbbr = searchComponents.getDocumentTypeList().get(existingTypeListbox.getSelectedIndex() - 1).getDocumentTypeAbbr();
 		documentTypeAsync.editDocumentType(fileCabinet, editDocumentTypeTextbox.getText(), editDocumentAbbrTextbox.getText(), documentTypeAbbr, editDocumentTypeHandler);
 	    } else {
-		idb.messageDialogBox("Missing Information", "Please fill in a Document Type, and Document Abbr.");
+		idb.messageDialogBox(1, "Missing Information", "Please fill in a Document Type, and Document Abbr.");
 	    }
 	}
 
@@ -224,7 +224,7 @@ public class EditDocumentTypes implements ChangeHandler, ClickHandler {
 	@Override
 	public void onSuccess(String resultMessage) {
 	    loadFileCabinetView(fileCabinet);
-	    idb.messageDialogBox("Add Document Type" , resultMessage);
+	    idb.messageDialogBox(2, "Add Document Type" , resultMessage);
 	}
 
     }
@@ -243,7 +243,7 @@ public class EditDocumentTypes implements ChangeHandler, ClickHandler {
 	@Override
 	public void onSuccess(String resultMessage) {
 	    loadFileCabinetView(fileCabinet);
-	    idb.messageDialogBox("Delete Document Type" , resultMessage);
+	    idb.messageDialogBox(2, "Delete Document Type" , resultMessage);
 	}
 
     }
@@ -262,7 +262,7 @@ public class EditDocumentTypes implements ChangeHandler, ClickHandler {
 	@Override
 	public void onSuccess(String resultMessage) {
 	    loadFileCabinetView(fileCabinet);
-	    idb.messageDialogBox("Edit Document Type" , resultMessage);
+	    idb.messageDialogBox(2, "Edit Document Type" , resultMessage);
 	}
 
     }

@@ -75,7 +75,7 @@ public class UploadDocument implements ClickHandler, FormPanel.SubmitCompleteHan
     public void onSubmit(SubmitEvent event) {
 
 	if (associatedWithListbox.getSelectedIndex() <= 0 || documentTypeListbox.getSelectedIndex() <= 0 || fileUploadWidget.getFilename().equals("")) {
-	    idb.messageDialogBox("Missing Information", "Please fill in all fields.");
+	    idb.messageDialogBox(1, "Missing Information", "Please fill in all fields.");
 	    event.cancel();
 	}
 
@@ -116,7 +116,7 @@ public class UploadDocument implements ClickHandler, FormPanel.SubmitCompleteHan
      */
     public void onSubmitComplete(SubmitCompleteEvent event) {
 	InformationDialogBox idb = new InformationDialogBox();
-	idb.messageDialogBox("File Upload Result", event.getResults());
+	idb.messageDialogBox(1, "File Upload Result", event.getResults());
     }
 
     /**

@@ -130,7 +130,7 @@ public class EditClientInfo implements ChangeHandler, ClickHandler {
 	    if (!clientFirstNameTextbox.getText().equals("") && !clientLastNameTextbox.getText().equals("") && !clientAccountNumberTextbox.getText().equals("") && !clientRepNumberTextbox.getText().equals("")) {
 		clientInformationAsync.addClientInformation(fileCabinet, clientFirstNameTextbox.getText(), clientLastNameTextbox.getText(), clientAccountNumberTextbox.getText(), clientRepNumberTextbox.getText(), addClientInformationHandler);
 	    } else {
-		idb.messageDialogBox("Missing Information", "Please fill in all fields.");
+		idb.messageDialogBox(1, "Missing Information", "Please fill in all fields.");
 	    }
 	}
 
@@ -146,7 +146,7 @@ public class EditClientInfo implements ChangeHandler, ClickHandler {
 		String clientID = searchComponents.getClientList().get(existingClientListbox.getSelectedIndex() - 1).getClientID();
 		clientInformationAsync.editClientInformation(fileCabinet, editClientFirstNameTextbox.getText(), editClientLastNameTextbox.getText(), editClientAccountNumberTextbox.getText(), editClientRepNumberTextbox.getText(), clientID, editClientInformationHandler);
 	    } else {
-		idb.messageDialogBox("Missing Information", "Please fill in all fields.");
+		idb.messageDialogBox(1, "Missing Information", "Please fill in all fields.");
 	    }
 	}
 
@@ -249,7 +249,7 @@ public class EditClientInfo implements ChangeHandler, ClickHandler {
 	@Override
 	public void onSuccess(String resultMessage) {
 	    loadFileCabinetView(fileCabinet);
-	    idb.messageDialogBox("Add Client" , resultMessage);
+	    idb.messageDialogBox(2, "Add Client" , resultMessage);
 	}
 
     }
@@ -268,7 +268,7 @@ public class EditClientInfo implements ChangeHandler, ClickHandler {
 	@Override
 	public void onSuccess(String resultMessage) {
 	    loadFileCabinetView(fileCabinet);
-	    idb.messageDialogBox("Delete Client" , resultMessage);
+	    idb.messageDialogBox(2, "Delete Client" , resultMessage);
 	}
 
     }
@@ -287,7 +287,7 @@ public class EditClientInfo implements ChangeHandler, ClickHandler {
 	@Override
 	public void onSuccess(String resultMessage) {
 	    loadFileCabinetView(fileCabinet);
-	    idb.messageDialogBox("Edit Client" , resultMessage);
+	    idb.messageDialogBox(2, "Edit Client" , resultMessage);
 	}
 
     }

@@ -65,7 +65,7 @@ public class LoginManager implements ClickHandler,KeyPressHandler {
 	    authentication.authenticateUser(username, password, authenticationHandler);
 	}else{
 	    //display error
-	    idb.messageDialogBox("Missing Information", "Please fill all form fields!");
+	    idb.messageDialogBox(1, "Missing Information", "Please fill all form fields!");
 	}
     }
 
@@ -203,7 +203,7 @@ public class LoginManager implements ClickHandler,KeyPressHandler {
 		setAuthenticatedUser(user);
 		History.newItem("UserAuthenticated");
 	    }else{
-		idb.messageDialogBox("Login Issue", "Username/Password pair not found.");
+		idb.messageDialogBox(0, "Login Issue", "Username/Password pair not found.");
 	    }				
 	}
 
@@ -211,7 +211,7 @@ public class LoginManager implements ClickHandler,KeyPressHandler {
 	 * METHOD:	ON FAILURE
 	 * @param ex - exception throw on RPC failure */
 	public void onFailure(Throwable ex){
-	    idb.messageDialogBox("RPC Failure", "An error has occurred. \n Please contact your administrator.");
+	    idb.messageDialogBox(0, "RPC Failure", "An error has occurred. \n Please contact your administrator.");
 	}
     }
 }

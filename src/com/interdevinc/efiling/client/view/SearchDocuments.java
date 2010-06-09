@@ -253,7 +253,7 @@ public class SearchDocuments implements ChangeHandler {
 	@Override
 	public void onFailure(Throwable caught) {
 	    idb.destroyTimer();
-	    idb.messageDialogBox("RPC Failure" , "Load Search Results RPC Failure");
+	    idb.messageDialogBox(0, "RPC Failure" , "Load Search Results RPC Failure");
 	}
 
 	@Override
