@@ -114,15 +114,16 @@ public class SearchDocuments implements ChangeHandler {
      */
     private void assembleComponents() {
 
-	searchOracle.add("Cat");
-	searchOracle.add("Dog");
-	searchOracle.add("Horse");
-	searchOracle.add("Canary");
-
 	int row = 0;
-	searchComponentsTable.setWidget(row, 0, new Label("Quick Search:"));
-	searchComponentsTable.setWidget(row, 1, quickSearchSuggestbox);
-	++row;
+	
+	//TODO Livesearch
+//	searchOracle.add("Cat");
+//	searchOracle.add("Dog");
+//	searchOracle.add("Horse");
+//	searchOracle.add("Canary");
+//	searchComponentsTable.setWidget(row, 0, new Label("Quick Search:"));
+//	searchComponentsTable.setWidget(row, 1, quickSearchSuggestbox);
+//	++row;
 
 	searchComponentsTable.setWidget(row, 0, cabinetTypeInfoList);
 	//searchComponentsTable.setWidget(row, 1, documentTypeList);
