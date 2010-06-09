@@ -1,7 +1,6 @@
 package com.interdevinc.efiling.server.processor;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -14,11 +13,10 @@ import com.interdevinc.efiling.client.processor.AuthenticationService;
 
 public class AuthenticationServiceImpl extends RemoteServiceServlet implements AuthenticationService{
 
-    private static final long serialVersionUID = 1L;
-
-    private final String url="jdbc:mysql://192.168.11.6/eamAppAuth";
-    private final String username="eamAppAuth";
-    private final String password="XVSxQaTeFhNpHLhn";
+    /**
+     * The serializable class AuthenticationServiceImpl needs a static final serialVersionUID field of type long.
+     */
+    private static final long serialVersionUID = -8814344346409497283L;
 
     private Connection connection;
     private Statement statement;
@@ -40,7 +38,10 @@ public class AuthenticationServiceImpl extends RemoteServiceServlet implements A
 	retrieveUserDetails(u, p);
 	
 	if (authenticatedUser != null) {
+	    logLoginAttempt(u, true);
 	    retrieveAccessControl();
+	} else {
+	    logLoginAttempt(u, false);
 	}
 
 	return authenticatedUser;
@@ -48,21 +49,57 @@ public class AuthenticationServiceImpl extends RemoteServiceServlet implements A
     }
 
     /**
+     * METHOD: LOG LOGIN ATTEMPT
+     * @param u
+     * @param isLoggedIn
+     * Logs the event into the UsageLog table in the efilingsys database.
+     */
+    private void logLoginAttempt(String u, boolean isLoggedIn) {
+	
+	int status;
+	if (isLoggedIn) {
+	    status = 1;
+	} else {
+	    status = 0;
+	}
+	
+	//query statement
+	final String insertQuery = "INSERT INTO UsageLog (`user`, `resource`, `action`, `status`) VALUES ('"+u+"', 'efiling', 'login', '"+status+"')";
+	
+	try{
+
+	    //init connection and statement
+	    connection = DatabaseConnectionService.retrieveDatabaseConnection("efilingsys", "WRITE");
+	    statement = connection.createStatement();
+
+	    //execute statement and retrieve resultSet
+	    statement.executeUpdate(insertQuery);
+
+	    //close all processing objects
+	    statement.close();
+	    connection.close();			
+
+	}catch (SQLException e){
+	    e.printStackTrace();
+	}
+	
+    }
+    
+    /**
      * METHOD: RETRIEVE USER DETAILS
-     * @param u username, p password
+     * @param u username
+     * @param p password
      * Validates username/password, creates an AuthenticatedUser instance
      */
     private void retrieveUserDetails(String u, String p) {
 
 	//query statement
 	final String userQuery = "SELECT userid, username, emailAddress FROM users WHERE (username='"+u+"' AND password='"+p+"')";
-
-	//System.out.println("AuthQuery: " + userQuery); //Debug Statement
 	
 	try{
 
 	    //init connection and statement
-	    connection = getConnection();
+	    connection = DatabaseConnectionService.retrieveDatabaseConnection("eamAppAuth", "READ");
 	    statement = connection.createStatement();
 
 	    //execute statement and retrieve resultSet
@@ -84,12 +121,6 @@ public class AuthenticationServiceImpl extends RemoteServiceServlet implements A
 	    statement.close();
 	    connection.close();			
 
-	}catch (InstantiationException e){
-	    e.printStackTrace();
-	}catch (IllegalAccessException e){
-	    e.printStackTrace();
-	}catch (ClassNotFoundException e){
-	    e.printStackTrace();
 	}catch (SQLException e){
 	    e.printStackTrace();
 	}
@@ -110,7 +141,7 @@ public class AuthenticationServiceImpl extends RemoteServiceServlet implements A
 	try{
 
 	    //init connection and statement
-	    connection = getConnection();
+	    connection = DatabaseConnectionService.retrieveDatabaseConnection("eamAppAuth", "READ");
 	    statement = connection.createStatement();
 
 	    //execute statement and retrieve resultSet
@@ -128,30 +159,12 @@ public class AuthenticationServiceImpl extends RemoteServiceServlet implements A
 	    statement.close();
 	    connection.close();			
 
-	}catch (InstantiationException e){
-	    e.printStackTrace();
-	}catch (IllegalAccessException e){
-	    e.printStackTrace();
-	}catch (ClassNotFoundException e){
-	    e.printStackTrace();
 	}catch (SQLException e){
 	    e.printStackTrace();
 	}
 	
 	authenticatedUser.setAccessControl(accessControl);
 
-    }
-
-    /**
-     * METHOD: GET CONNECTION
-     * @return
-     * @throws InstantiationException
-     * @throws IllegalAccessException
-     * @throws ClassNotFoundException
-     * @throws SQLException */
-    private Connection getConnection() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException{
-	Class.forName("com.mysql.jdbc.Driver").newInstance();
-	return DriverManager.getConnection(url,username,password);
     }
 
 }

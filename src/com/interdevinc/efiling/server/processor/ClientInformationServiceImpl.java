@@ -1,7 +1,6 @@
 package com.interdevinc.efiling.server.processor;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -17,18 +16,6 @@ public class ClientInformationServiceImpl extends RemoteServiceServlet implement
      * The serializable class ClientInformationServiceImpl needs a static final serialVersionUID field of type long.
      */
     private static final long serialVersionUID = 4028094314825595722L;
-
-    private final String host = "jdbc:mysql://192.168.11.6/";
-    
-    private final String efilingDatabase = "efilingsys";
-    private final String efilingUsernameRead = "efilingRead";
-    private final String efilingPasswordRead = "TUPMVfwTAEE8dTjv";
-    private final String efilingUsernameWrite = "efilingWrite";
-    private final String efilingPasswordWrite = "JERQUqGp74RUhN9d";
-    
-    private final String tradeDataDatabase = "clearingdata";
-    private final String tradeUsernameRead = "tradeDataRead";
-    private final String tradePasswordRead = "7rxLBUc5duVrWRZ2";
 
     private Connection connection;
     private Statement statement;
@@ -88,7 +75,7 @@ public class ClientInformationServiceImpl extends RemoteServiceServlet implement
 	try{
 
 	    //init connection and statement
-	    connection = getConnection(efilingDatabase, efilingUsernameWrite, efilingPasswordWrite);
+	    connection = DatabaseConnectionService.retrieveDatabaseConnection("efilingsys", "WRITE");
 	    statement = connection.createStatement();
 
 	    //execute statement and retrieve resultSet
@@ -104,12 +91,6 @@ public class ClientInformationServiceImpl extends RemoteServiceServlet implement
 	    statement.close();		
 	    connection.close();
 	    
-	}catch (InstantiationException e){
-	    e.printStackTrace();
-	}catch (IllegalAccessException e){
-	    e.printStackTrace();
-	}catch (ClassNotFoundException e){
-	    e.printStackTrace();
 	}catch (SQLException e){
 	    e.printStackTrace();
 	}
@@ -149,7 +130,7 @@ public class ClientInformationServiceImpl extends RemoteServiceServlet implement
 	try{
 
 	    //init connection and statement
-	    connection = getConnection(efilingDatabase, efilingUsernameRead, efilingPasswordRead);
+	    connection = DatabaseConnectionService.retrieveDatabaseConnection("eamAppAuth", "READ");
 	    statement = connection.createStatement();
 
 	    //execute statement and retrieve resultSet
@@ -164,13 +145,7 @@ public class ClientInformationServiceImpl extends RemoteServiceServlet implement
 	    results.close();
 	    statement.close();		
 	    connection.close();
-	    
-	}catch (InstantiationException e){
-	    e.printStackTrace();
-	}catch (IllegalAccessException e){
-	    e.printStackTrace();
-	}catch (ClassNotFoundException e){
-	    e.printStackTrace();
+
 	}catch (SQLException e){
 	    e.printStackTrace();
 	}
@@ -189,7 +164,7 @@ public class ClientInformationServiceImpl extends RemoteServiceServlet implement
 	try{
 
 	    //init connection and statement
-	    connection = getConnection(efilingDatabase, efilingUsernameWrite, efilingPasswordWrite);
+	    connection = DatabaseConnectionService.retrieveDatabaseConnection("efilingsys", "WRITE");
 	    statement = connection.createStatement();
 
 	    //execute statement and retrieve resultSet
@@ -204,13 +179,7 @@ public class ClientInformationServiceImpl extends RemoteServiceServlet implement
 	    //close all processing objects
 	    statement.close();		
 	    connection.close();
-	    
-	}catch (InstantiationException e){
-	    e.printStackTrace();
-	}catch (IllegalAccessException e){
-	    e.printStackTrace();
-	}catch (ClassNotFoundException e){
-	    e.printStackTrace();
+
 	}catch (SQLException e){
 	    e.printStackTrace();
 	}
@@ -230,7 +199,7 @@ public class ClientInformationServiceImpl extends RemoteServiceServlet implement
 	try{
 
 	    //init connection and statement
-	    connection = getConnection(efilingDatabase, efilingUsernameWrite, efilingPasswordWrite);
+	    connection = DatabaseConnectionService.retrieveDatabaseConnection("efilingsys", "WRITE");
 	    statement = connection.createStatement();
 
 	    //execute statement and retrieve resultSet
@@ -246,28 +215,9 @@ public class ClientInformationServiceImpl extends RemoteServiceServlet implement
 	    statement.close();		
 	    connection.close();
 	    
-	}catch (InstantiationException e){
-	    e.printStackTrace();
-	}catch (IllegalAccessException e){
-	    e.printStackTrace();
-	}catch (ClassNotFoundException e){
-	    e.printStackTrace();
 	}catch (SQLException e){
 	    e.printStackTrace();
 	}
-    }
-    
-    /**
-     * METHOD: GET CONNECTION
-     * @return
-     * @throws InstantiationException 
-     * @throws IllegalAccessException
-     * @throws ClassNotFoundException
-     * @throws SQLException */
-    private Connection getConnection(String database, String username, String password) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException{
-	String url = host + database;
-	Class.forName("com.mysql.jdbc.Driver").newInstance();
-	return DriverManager.getConnection(url, username, password);
     }
     
 }

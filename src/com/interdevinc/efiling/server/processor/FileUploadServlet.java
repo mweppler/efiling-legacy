@@ -36,18 +36,6 @@ public class FileUploadServlet extends HttpServlet {
      */
     private static final long serialVersionUID = -8048716200519402624L;
 
-    private final String host = "jdbc:mysql://192.168.11.6/";
-
-    private final String efilingDatabase = "efilingsys";
-    private final String efilingUsernameRead = "efilingRead";
-    private final String efilingPasswordRead = "TUPMVfwTAEE8dTjv";
-    private final String efilingUsernameWrite = "efilingWrite";
-    private final String efilingPasswordWrite = "JERQUqGp74RUhN9d";
-
-    private final String tradeDataDatabase = "clearingdata";
-    private final String tradeUsernameRead = "tradeDataRead";
-    private final String tradePasswordRead = "7rxLBUc5duVrWRZ2";
-
     private Connection connection;
     private Statement statement;
     private ResultSet results;
@@ -119,7 +107,7 @@ public class FileUploadServlet extends HttpServlet {
 	try{
 
 	    //init connection and statement
-	    connection = getConnection(efilingDatabase, efilingUsernameWrite, efilingPasswordWrite);
+	    connection = DatabaseConnectionService.retrieveDatabaseConnection("efilingsys", "WRITE");
 	    statement = connection.createStatement();
 
 	    //execute update
@@ -139,12 +127,6 @@ public class FileUploadServlet extends HttpServlet {
 	    statement.close();		
 	    connection.close();
 
-	}catch (InstantiationException e){
-	    e.printStackTrace();
-	}catch (IllegalAccessException e){
-	    e.printStackTrace();
-	}catch (ClassNotFoundException e){
-	    e.printStackTrace();
 	}catch (SQLException e){
 	    e.printStackTrace();
 	}
@@ -332,19 +314,6 @@ public class FileUploadServlet extends HttpServlet {
 	} catch (IOException ioe) {
 	    ioe.printStackTrace();
 	}
-    }
-
-    /**
-     * METHOD: GET CONNECTION
-     * @return
-     * @throws InstantiationException 
-     * @throws IllegalAccessException
-     * @throws ClassNotFoundException
-     * @throws SQLException */
-    private Connection getConnection(String database, String username, String password) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException{
-	String url = host + database;
-	Class.forName("com.mysql.jdbc.Driver").newInstance();
-	return DriverManager.getConnection(url, username, password);
     }
 
 }

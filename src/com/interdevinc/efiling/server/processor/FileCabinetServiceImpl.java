@@ -25,18 +25,6 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
      */
     private static final long serialVersionUID = 1642153038873292865L;
 
-    private final String host = "jdbc:mysql://192.168.11.6/";
-    
-    private final String efilingDatabase = "efilingsys";
-    private final String efilingUsernameRead = "efilingRead";
-    private final String efilingPasswordRead = "TUPMVfwTAEE8dTjv";
-    private final String efilingUsernameWrite = "efilingWrite";
-    private final String efilingPasswordWrite = "JERQUqGp74RUhN9d";
-    
-    private final String tradeDataDatabase = "clearingdata";
-    private final String tradeUsernameRead = "tradeDataRead";
-    private final String tradePasswordRead = "7rxLBUc5duVrWRZ2";
-
     private Connection connection;
     private Statement statement;
     private ResultSet results;
@@ -104,7 +92,7 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 	try{
 
 	    //init connection and statement
-	    connection = getConnection(efilingDatabase, efilingUsernameWrite, efilingPasswordWrite);
+	    connection = DatabaseConnectionService.retrieveDatabaseConnection("efilingsys", "WRITE");
 	    statement = connection.createStatement();
 
 	    //execute statement and retrieve resultSet
@@ -120,12 +108,6 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 	    statement.close();		
 	    connection.close();
 	    
-	}catch (InstantiationException e){
-	    e.printStackTrace();
-	}catch (IllegalAccessException e){
-	    e.printStackTrace();
-	}catch (ClassNotFoundException e){
-	    e.printStackTrace();
 	}catch (SQLException e){
 	    e.printStackTrace();
 	}
@@ -231,7 +213,7 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 	try{
 
 	    //init connection and statement
-	    connection = getConnection(efilingDatabase, efilingUsernameRead, efilingPasswordRead);
+	    connection = DatabaseConnectionService.retrieveDatabaseConnection("efilingsys", "READ");
 	    statement = connection.createStatement();
 
 	    //execute statement and retrieve resultSet
@@ -249,12 +231,6 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 	    statement.close();		
 	    connection.close();
 	    
-	}catch (InstantiationException e){
-	    e.printStackTrace();
-	}catch (IllegalAccessException e){
-	    e.printStackTrace();
-	}catch (ClassNotFoundException e){
-	    e.printStackTrace();
 	}catch (SQLException e){
 	    e.printStackTrace();
 	}
@@ -305,7 +281,7 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 	try{
 
 	    //init connection and statement
-	    connection = getConnection(efilingDatabase, efilingUsernameRead, efilingPasswordRead);
+	    connection = DatabaseConnectionService.retrieveDatabaseConnection("efilingsys", "READ");
 	    statement = connection.createStatement();
 
 	    //execute statement and retrieve resultSet
@@ -321,12 +297,6 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 	    statement.close();		
 	    connection.close();
 	    
-	}catch (InstantiationException e){
-	    e.printStackTrace();
-	}catch (IllegalAccessException e){
-	    e.printStackTrace();
-	}catch (ClassNotFoundException e){
-	    e.printStackTrace();
 	}catch (SQLException e){
 	    e.printStackTrace();
 	}
@@ -369,7 +339,7 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 	try{
 
 	    //init connection and statement
-	    connection = getConnection(efilingDatabase, efilingUsernameWrite, efilingPasswordWrite);
+	    connection = DatabaseConnectionService.retrieveDatabaseConnection("efilingsys", "WRITE");
 	    statement = connection.createStatement();
 
 	    //execute statement and retrieve resultSet
@@ -384,13 +354,7 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 	    //close all processing objects
 	    statement.close();		
 	    connection.close();
-	    
-	}catch (InstantiationException e){
-	    e.printStackTrace();
-	}catch (IllegalAccessException e){
-	    e.printStackTrace();
-	}catch (ClassNotFoundException e){
-	    e.printStackTrace();
+
 	}catch (SQLException e){
 	    e.printStackTrace();
 	}
@@ -419,7 +383,7 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 	try{
 
 	    //init connection and statement
-	    connection = getConnection(efilingDatabase, efilingUsernameRead, efilingPasswordRead);
+	    connection = DatabaseConnectionService.retrieveDatabaseConnection("efilingsys", "READ");
 	    statement = connection.createStatement();
 
 	    //execute statement and retrieve resultSet
@@ -439,12 +403,6 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 	    results.close();
 	    statement.close();		
 
-	}catch (InstantiationException e){
-	    e.printStackTrace();
-	}catch (IllegalAccessException e){
-	    e.printStackTrace();
-	}catch (ClassNotFoundException e){
-	    e.printStackTrace();
 	}catch (SQLException e){
 	    e.printStackTrace();
 	}
@@ -477,7 +435,7 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 	try{
 
 	    //init connection and statement
-	    connection = getConnection(efilingDatabase, efilingUsernameRead, efilingPasswordRead);
+	    connection = DatabaseConnectionService.retrieveDatabaseConnection("efilingsys", "READ");
 	    statement = connection.createStatement();
 
 	    //execute statement and retrieve resultSet
@@ -497,12 +455,6 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 	    results.close();
 	    statement.close();			
 
-	}catch (InstantiationException e){
-	    e.printStackTrace();
-	}catch (IllegalAccessException e){
-	    e.printStackTrace();
-	}catch (ClassNotFoundException e){
-	    e.printStackTrace();
 	}catch (SQLException e){
 	    e.printStackTrace();
 	}
@@ -522,7 +474,7 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 	try{
 
 	    //init connection and statement
-	    connection = getConnection(tradeDataDatabase, tradeUsernameRead, tradePasswordRead);
+	    connection = DatabaseConnectionService.retrieveDatabaseConnection("efilingsys", "READ");
 	    statement = connection.createStatement();
 
 	    //execute statement and retrieve resultSet
@@ -542,13 +494,7 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 	    results.close();
 	    statement.close();		
 	    connection.close();
-	    
-	}catch (InstantiationException e){
-	    e.printStackTrace();
-	}catch (IllegalAccessException e){
-	    e.printStackTrace();
-	}catch (ClassNotFoundException e){
-	    e.printStackTrace();
+
 	}catch (SQLException e){
 	    e.printStackTrace();
 	}
@@ -568,7 +514,7 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 	try{
 
 	    //init connection and statement
-	    connection = getConnection(efilingDatabase, efilingUsernameRead, efilingPasswordRead);
+	    connection = DatabaseConnectionService.retrieveDatabaseConnection("efilingsys", "READ");
 	    statement = connection.createStatement();
 
 	    //execute statement and retrieve resultSet
@@ -589,12 +535,6 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 	    statement.close();		
 	    connection.close();
 	    
-	}catch (InstantiationException e){
-	    e.printStackTrace();
-	}catch (IllegalAccessException e){
-	    e.printStackTrace();
-	}catch (ClassNotFoundException e){
-	    e.printStackTrace();
 	}catch (SQLException e){
 	    e.printStackTrace();
 	}
@@ -623,7 +563,7 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 	try{
 
 	    //init connection and statement
-	    connection = getConnection(efilingDatabase, efilingUsernameRead, efilingPasswordRead);
+	    connection = DatabaseConnectionService.retrieveDatabaseConnection("efilingsys", "READ");
 	    statement = connection.createStatement();
 
 	    //execute statement and retrieve resultSet
@@ -642,13 +582,7 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 	    results.close();
 	    statement.close();			
 	    connection.close();
-	    
-	}catch (InstantiationException e){
-	    e.printStackTrace();
-	}catch (IllegalAccessException e){
-	    e.printStackTrace();
-	}catch (ClassNotFoundException e){
-	    e.printStackTrace();
+
 	}catch (SQLException e){
 	    e.printStackTrace();
 	}
@@ -669,7 +603,7 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 	try{
 
 	    //init connection and statement
-	    connection = getConnection(efilingDatabase, efilingUsernameRead, efilingPasswordRead);
+	    connection = DatabaseConnectionService.retrieveDatabaseConnection("efilingsys", "READ");
 	    statement = connection.createStatement();
 
 	    //execute statement and retrieve resultSet
@@ -690,12 +624,6 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 	    results.close();
 	    statement.close();		
 
-	}catch (InstantiationException e){
-	    e.printStackTrace();
-	}catch (IllegalAccessException e){
-	    e.printStackTrace();
-	}catch (ClassNotFoundException e){
-	    e.printStackTrace();
 	}catch (SQLException e){
 	    e.printStackTrace();
 	}
@@ -723,7 +651,7 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 	try{
 
 	    //init connection and statement
-	    connection = getConnection(efilingDatabase, efilingUsernameWrite, efilingPasswordWrite);
+	    connection = DatabaseConnectionService.retrieveDatabaseConnection("efilingsys", "WRITE");
 	    statement = connection.createStatement();
 
 	    //execute statement and retrieve resultSet
@@ -739,28 +667,9 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 	    statement.close();		
 	    connection.close();
 	    
-	}catch (InstantiationException e){
-	    e.printStackTrace();
-	}catch (IllegalAccessException e){
-	    e.printStackTrace();
-	}catch (ClassNotFoundException e){
-	    e.printStackTrace();
 	}catch (SQLException e){
 	    e.printStackTrace();
 	}
-    }
-
-    /**
-     * METHOD: GET CONNECTION
-     * @return
-     * @throws InstantiationException 
-     * @throws IllegalAccessException
-     * @throws ClassNotFoundException
-     * @throws SQLException */
-    private Connection getConnection(String database, String username, String password) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException{
-	String url = host + database;
-	Class.forName("com.mysql.jdbc.Driver").newInstance();
-	return DriverManager.getConnection(url, username, password);
     }
     
 }
