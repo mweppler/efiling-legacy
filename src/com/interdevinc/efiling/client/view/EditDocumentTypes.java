@@ -111,7 +111,7 @@ public class EditDocumentTypes implements ChangeHandler, ClickHandler {
 
 	if (event.getSource().equals(addDocumentTypeButton)) {
 	    if (!documentTypeTextbox.getText().equals("") && !documentAbbrTextbox.getText().equals("")) {
-		documentTypeAsync.addDocumentType(fileCabinet, documentTypeTextbox.getText(), documentAbbrTextbox.getText(), addDocumentTypeHandler);
+		documentTypeAsync.addDocumentType(authenticatedUser, fileCabinet, documentTypeTextbox.getText(), documentAbbrTextbox.getText(), addDocumentTypeHandler);
 	    } else {
 		idb.messageDialogBox(1, "Missing Information", "Please fill in a Document Type, and Document Abbr.");
 	    }
@@ -120,14 +120,14 @@ public class EditDocumentTypes implements ChangeHandler, ClickHandler {
 	if (event.getSource().equals(deleteDocumentTypeButton)) {
 	    if (existingTypeListbox.getSelectedIndex() > 0) {
 		String documentTypeAbbr = searchComponents.getDocumentTypeList().get(existingTypeListbox.getSelectedIndex() - 1).getDocumentTypeAbbr();
-		documentTypeAsync.deleteDocumentType(fileCabinet, documentTypeAbbr, deleteDocumentTypeHandler);
+		documentTypeAsync.deleteDocumentType(authenticatedUser, fileCabinet, documentTypeAbbr, deleteDocumentTypeHandler);
 	    }
 	}
 
 	if (event.getSource().equals(editDocumentTypeButton)) {
 	    if (existingTypeListbox.getSelectedIndex() > 0 && !editDocumentTypeTextbox.getText().equals("") && !editDocumentAbbrTextbox.getText().equals("")) {
 		String documentTypeAbbr = searchComponents.getDocumentTypeList().get(existingTypeListbox.getSelectedIndex() - 1).getDocumentTypeAbbr();
-		documentTypeAsync.editDocumentType(fileCabinet, editDocumentTypeTextbox.getText(), editDocumentAbbrTextbox.getText(), documentTypeAbbr, editDocumentTypeHandler);
+		documentTypeAsync.editDocumentType(authenticatedUser, fileCabinet, editDocumentTypeTextbox.getText(), editDocumentAbbrTextbox.getText(), documentTypeAbbr, editDocumentTypeHandler);
 	    } else {
 		idb.messageDialogBox(1, "Missing Information", "Please fill in a Document Type, and Document Abbr.");
 	    }

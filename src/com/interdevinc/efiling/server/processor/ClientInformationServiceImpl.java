@@ -184,7 +184,7 @@ public class ClientInformationServiceImpl extends RemoteServiceServlet implement
 	    connection.close();
 	    
 	    if (insertedRows > 0) {
-		retrieveSelectedClient(selectLastClient());
+		retrieveSelectedClient(selectLastClientID());
 		logClientInfoAttempt("addClient", true);
 		resultMessage = new String("Added Client: " + clientAccountNumber + " - " + clientLastName + ", " + clientFirstName);
 	    } else {
@@ -280,7 +280,7 @@ public class ClientInformationServiceImpl extends RemoteServiceServlet implement
      * @return cid
      * Retrieves the last clientID/key in the clientInfo database.
      */
-    private String selectLastClient() {
+    private String selectLastClientID() {
 	
 	String cid = new String();
 	
