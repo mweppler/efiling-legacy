@@ -37,6 +37,7 @@ public class UploadDocument implements ClickHandler, FormPanel.SubmitCompleteHan
     private FileUpload fileUploadWidget;
     private Hidden cabinetFormField;
     private Hidden associatedWithFormField;
+    private Hidden authenticatedUserFormField;
     private Hidden documentTypeFormField;
     private ListBox associatedWithListbox;
     private ListBox documentTypeListbox;
@@ -91,6 +92,8 @@ public class UploadDocument implements ClickHandler, FormPanel.SubmitCompleteHan
 
 	if (!event.isCanceled()) {
 
+	    authenticatedUserFormField.setValue(authenticatedUser.getUsername());
+	    
 	    if (fileCabinet.getCabinetName().equals("Broker Paperwork")) {
 		associatedWithFormField.setValue(searchComponents.getBrokerList().get(associatedWithListbox.getSelectedIndex() - 1).getRepNumber());
 	    } else if (fileCabinet.getCabinetName().equals("Client Paperwork")) {
@@ -162,6 +165,9 @@ public class UploadDocument implements ClickHandler, FormPanel.SubmitCompleteHan
 
 	associatedWithFormField.setName("associatedWith");
 	widgetPanel.add(associatedWithFormField);
+
+	authenticatedUserFormField.setName("authenticatedUser");
+	widgetPanel.add(authenticatedUserFormField);
 	
 	documentTypeFormField.setName("documentType");
 	widgetPanel.add(documentTypeFormField);
@@ -194,6 +200,7 @@ public class UploadDocument implements ClickHandler, FormPanel.SubmitCompleteHan
 	associatedWithListbox = new ListBox();
 	documentTypeListbox = new ListBox();
 	associatedWithFormField = new Hidden();
+	authenticatedUserFormField = new Hidden();
 	documentTypeFormField = new Hidden();
 	cabinetFormField = new Hidden();
 	// Create a FileUpload widget.

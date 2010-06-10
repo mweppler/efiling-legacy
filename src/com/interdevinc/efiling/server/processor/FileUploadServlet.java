@@ -47,6 +47,7 @@ public class FileUploadServlet extends HttpServlet {
     private boolean fileWrittenToStorage;
     private File uploadedFile;
     private String associatedWith;
+    private String authenticatedUser;
     private String documentType;
     private String fileCabinet;
     private String fileName;
@@ -136,6 +137,40 @@ public class FileUploadServlet extends HttpServlet {
     }
 
     /**
+     * METHOD: LOG FILE UPLOAD
+     */
+    private void logFileUpload(boolean wasUploaded) {
+	
+	int status;
+	
+	if (wasUploaded) {
+	    status = 1;
+	} else {
+	    status = 0;
+	}
+	
+	final String logQuery = "INSERT INTO UsageLog (`user`, `resource`, `action`, `status`) VALUES ('"+authenticatedUser+"', 'efiling', 'upload_"+fileCabinet+"_"+uploadID+"', '"+status+"')";
+
+	try{
+
+	    //init connection and statement
+	    connection = DatabaseConnectionService.retrieveDatabaseConnection("efilingsys", "WRITE");
+	    statement = connection.createStatement();
+
+	    //execute statement and retrieve resultSet
+	    statement.executeUpdate(logQuery);
+
+	    //close all processing objects
+	    statement.close();		
+	    connection.close();
+
+	}catch (SQLException e){
+	    e.printStackTrace();
+	}
+	
+    }
+    
+    /**
      * METHOD: PROCESS FORM ELEMENTS
      * Initial method called by doPost(). 
      * Calls processFormField() & processUploadedFile() to process form fields. 
@@ -179,17 +214,22 @@ public class FileUploadServlet extends HttpServlet {
 		if (uploadedFile.exists()) {
 		    if (dataWrittenToDatabase = insertDataIntoDatabase()) {
 			if (fileWrittenToStorage = writeFileToStorage()) {
+			    logFileUpload(true);
 			} else {
+			    logFileUpload(false);
 			    System.out.println("File not written to Storage.");
 			}
 		    } else {
+			logFileUpload(false);
 			System.out.println("Data not written to Database.");
 		    }
 		} else {
+		    logFileUpload(false);
 		    System.out.println("File: " + uploadedFile.getAbsolutePath() + "\nDoes not exist.");
 		}
 
 	    } catch (Exception ex) {
+		logFileUpload(false);
 		ex.printStackTrace();
 	    }
 	}
@@ -203,6 +243,8 @@ public class FileUploadServlet extends HttpServlet {
     private void processFormField(FileItem i) {
 	if (i.getFieldName().equals("associatedWith")) {
 	    associatedWith = i.getString();
+	} else if (i.getFieldName().equals("authenticatedUser")) {
+	    authenticatedUser = i.getString();
 	} else if (i.getFieldName().equals("documentType")) {
 	    documentType = i.getString();
 	} else if (i.getFieldName().equals("fileCabinet")) {
@@ -292,23 +334,15 @@ public class FileUploadServlet extends HttpServlet {
 	    String responseString = new String();
 
 	    if (dataWrittenToDatabase && fileWrittenToStorage) {	    
-		responseString = ("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 " +
-			"Transitional//EN\">\n" +
-			"<HTML>\n" +
-			"<HEAD><TITLE>Upload Successful</TITLE></HEAD>\n" +
-			"<BODY>\n" +
-			"<H1>(" + documentType + ") document for (" + associatedWith + ") uploaded into (" + fileCabinet + ") cabinet with uploadID (" + uploadID + ")</H1>\n" +
-		"</BODY></HTML>");
+		responseString = "(" + documentType + ") document for (" + associatedWith + ") uploaded into (" + fileCabinet + ") cabinet with uploadID (" + uploadID + ")";
+	    } else if (dataWrittenToDatabase && !fileWrittenToStorage) {
+		responseString = "Upload Failure: <br />File could not be written to storage."; 
+	    } else if (!dataWrittenToDatabase) {
+		responseString = "Upload Failure: <br />Data could not be written to the database"; 
 	    } else {
-		responseString = ("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 " +
-			"Transitional//EN\">\n" +
-			"<HTML>\n" +
-			"<HEAD><TITLE>Upload Failure</TITLE></HEAD>\n" +
-			"<BODY>\n" +
-			"<H1>Upload Failure</H1>\n" +
-		"</BODY></HTML>");
+		responseString = "YOU SHOULD NOT SEE ME!!!";
 	    }
-
+	    
 	    responseMessage.println(responseString);
 
 	} catch (IOException ioe) {
