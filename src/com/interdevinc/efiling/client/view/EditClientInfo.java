@@ -128,7 +128,7 @@ public class EditClientInfo implements ChangeHandler, ClickHandler {
 
 	if (event.getSource().equals(addClientButton)) {
 	    if (!clientFirstNameTextbox.getText().equals("") && !clientLastNameTextbox.getText().equals("") && !clientAccountNumberTextbox.getText().equals("") && !clientRepNumberTextbox.getText().equals("")) {
-		clientInformationAsync.addClientInformation(fileCabinet, clientFirstNameTextbox.getText(), clientLastNameTextbox.getText(), clientAccountNumberTextbox.getText(), clientRepNumberTextbox.getText(), addClientInformationHandler);
+		clientInformationAsync.addClientInformation(authenticatedUser, fileCabinet, clientFirstNameTextbox.getText(), clientLastNameTextbox.getText(), clientAccountNumberTextbox.getText(), clientRepNumberTextbox.getText(), addClientInformationHandler);
 	    } else {
 		idb.messageDialogBox(1, "Missing Information", "Please fill in all fields.");
 	    }
@@ -137,14 +137,14 @@ public class EditClientInfo implements ChangeHandler, ClickHandler {
 	if (event.getSource().equals(deleteClientButton)) {
 	    if (existingClientListbox.getSelectedIndex() > 0) {
 		String clientID = searchComponents.getClientList().get(existingClientListbox.getSelectedIndex() - 1).getClientID();
-		clientInformationAsync.deleteClientInformation(fileCabinet, clientID, deleteInformationHandler);
+		clientInformationAsync.deleteClientInformation(authenticatedUser, fileCabinet, clientID, deleteInformationHandler);
 	    }
 	}
 
 	if (event.getSource().equals(editClientButton)) {
 	    if (!editClientAccountNumberTextbox.getText().equals("") && !editClientFirstNameTextbox.getText().equals("") && !editClientLastNameTextbox.getText().equals("") && !editClientRepNumberTextbox.getText().equals("")) {
 		String clientID = searchComponents.getClientList().get(existingClientListbox.getSelectedIndex() - 1).getClientID();
-		clientInformationAsync.editClientInformation(fileCabinet, editClientFirstNameTextbox.getText(), editClientLastNameTextbox.getText(), editClientAccountNumberTextbox.getText(), editClientRepNumberTextbox.getText(), clientID, editClientInformationHandler);
+		clientInformationAsync.editClientInformation(authenticatedUser, fileCabinet, editClientFirstNameTextbox.getText(), editClientLastNameTextbox.getText(), editClientAccountNumberTextbox.getText(), editClientRepNumberTextbox.getText(), clientID, editClientInformationHandler);
 	    } else {
 		idb.messageDialogBox(1, "Missing Information", "Please fill in all fields.");
 	    }

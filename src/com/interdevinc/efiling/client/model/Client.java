@@ -22,7 +22,7 @@ public class Client implements IsSerializable {
      * CONSTRUCTOR: CLIENT
      * @param an Account Number, fn First Name, ln Last Name
      */    
-    public Client(String cid, String an, String fn, String ln, String rn) {
+    public Client(String cid, String an, String ln, String fn, String rn) {
 	setAccountNumber(an);
 	setClientID(cid);
 	setFirstName(fn);

@@ -507,7 +507,7 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
      */
     private void loadClientInformation() {
 	
-	final String clientInfoQuery = "SELECT `key`, acctNum, firstName, lastName, repNum FROM clientInfo ORDER BY lastName";
+	final String clientInfoQuery = "SELECT `key`, acctNum, lastName, firstName, repNum FROM clientInfo ORDER BY lastName";
 	
 	ArrayList<Client> clientInfo = new ArrayList<Client>();
 	

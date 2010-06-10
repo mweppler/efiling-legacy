@@ -7,6 +7,7 @@ import java.sql.Statement;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.interdevinc.efiling.client.model.AuthenticatedUser;
+import com.interdevinc.efiling.client.model.Client;
 import com.interdevinc.efiling.client.model.FileCabinet;
 import com.interdevinc.efiling.client.processor.ClientInformationService;
 
@@ -22,6 +23,7 @@ public class ClientInformationServiceImpl extends RemoteServiceServlet implement
     private ResultSet results;
 
     private AuthenticatedUser authenticatedUser;
+    private Client clientInfo;
     private FileCabinet loadedFileCabinet;
 
     private String clientFirstName;
@@ -42,8 +44,9 @@ public class ClientInformationServiceImpl extends RemoteServiceServlet implement
      * @return resultMessage
      * Calls checkForClientExistance() if no existing client insertClientInformation().
      */
-    public String addClientInformation(FileCabinet fc, String cfn, String cln, String can, String crn) {
+    public String addClientInformation(AuthenticatedUser au, FileCabinet fc, String cfn, String cln, String can, String crn) {
 	
+	authenticatedUser = au;
 	loadedFileCabinet = fc;
 	clientFirstName = cfn;
 	clientLastName = cln;
@@ -55,7 +58,7 @@ public class ClientInformationServiceImpl extends RemoteServiceServlet implement
 	    return "A Client: " + clientAccountNumber + " already exists.";
 	}
 	
-	insertDocumentType();
+	insertClientInfo();
 	
 	return resultMessage;
     }
@@ -65,8 +68,9 @@ public class ClientInformationServiceImpl extends RemoteServiceServlet implement
      * @return resultMessage
      * Deletes a key by clientID.
      */
-    public String deleteClientInformation(FileCabinet fc, String cid) {
+    public String deleteClientInformation(AuthenticatedUser au, FileCabinet fc, String cid) {
 	
+	authenticatedUser = au;
 	loadedFileCabinet = fc;
 	clientID = cid;
 	
@@ -81,15 +85,18 @@ public class ClientInformationServiceImpl extends RemoteServiceServlet implement
 	    //execute statement and retrieve resultSet
 	    int insertedRows = statement.executeUpdate(deleteQuery);
 
-	    if (insertedRows > 0) {
-		resultMessage = new String("Deleted Client: " + clientID );
-	    } else {
-		resultMessage = new String("Error deleting client information: " + clientID);
-	    }
-	    
 	    //close all processing objects
 	    statement.close();		
 	    connection.close();
+	    
+	    if (insertedRows > 0) {
+		retrieveSelectedClient(clientID);
+		logClientInfoAttempt("deleteClient", true);
+		resultMessage = new String("Deleted Client: " + clientID );
+	    } else {
+		logClientInfoAttempt("deleteClient", false);
+		resultMessage = new String("Error deleting client information: " + clientID);
+	    }
 	    
 	}catch (SQLException e){
 	    e.printStackTrace();
@@ -103,8 +110,9 @@ public class ClientInformationServiceImpl extends RemoteServiceServlet implement
      * @return resultMessage
      * Updates a acctNum, lastName, firstName, repNum by key.
      */
-    public String editClientInformation(FileCabinet fc, String cfn, String cln, String can, String crn, String cid) {
+    public String editClientInformation(AuthenticatedUser au, FileCabinet fc, String cfn, String cln, String can, String crn, String cid) {
 	
+	authenticatedUser = au;
 	loadedFileCabinet = fc;
 	clientFirstName = cfn;
 	clientLastName = cln;
@@ -112,7 +120,7 @@ public class ClientInformationServiceImpl extends RemoteServiceServlet implement
 	clientRepNumber = crn;
 	clientID = cid;
 	
-	updateDocumentType();
+	updateClientInfo();
 	
 	return resultMessage;
     }
@@ -130,7 +138,7 @@ public class ClientInformationServiceImpl extends RemoteServiceServlet implement
 	try{
 
 	    //init connection and statement
-	    connection = DatabaseConnectionService.retrieveDatabaseConnection("eamAppAuth", "READ");
+	    connection = DatabaseConnectionService.retrieveDatabaseConnection("efilingsys", "READ");
 	    statement = connection.createStatement();
 
 	    //execute statement and retrieve resultSet
@@ -157,7 +165,7 @@ public class ClientInformationServiceImpl extends RemoteServiceServlet implement
      * METHOD: INSERT CLIENT INFORMATION (addClientInformation)
      * Inserts the acctNum, lastName, firstName, repNum into the clientInfo table. Sets the result message.
      */
-    private void insertDocumentType() {
+    private void insertClientInfo() {
 	
 	final String insertQuery = "INSERT INTO clientInfo (acctNum, lastName, firstName, repNum) VALUES ('" + clientAccountNumber + "', '" + clientLastName + "', '" + clientFirstName + "', '" + clientRepNumber + "')";
 	
@@ -170,12 +178,61 @@ public class ClientInformationServiceImpl extends RemoteServiceServlet implement
 	    //execute statement and retrieve resultSet
 	    int insertedRows = statement.executeUpdate(insertQuery);
 
+	    
+	    //close all processing objects
+	    statement.close();		
+	    connection.close();
+	    
 	    if (insertedRows > 0) {
+		retrieveSelectedClient(selectLastClient());
+		logClientInfoAttempt("addClient", true);
 		resultMessage = new String("Added Client: " + clientAccountNumber + " - " + clientLastName + ", " + clientFirstName);
 	    } else {
+		logClientInfoAttempt("addClient", false);
 		resultMessage = new String("Error adding client information: " + clientAccountNumber + " - " + clientLastName + ", " + clientFirstName);
 	    }
-	    
+
+	}catch (SQLException e){
+	    e.printStackTrace();
+	}
+	
+    }
+    
+    /**
+     * METHOD: LOG CLIENT INFO ATTEMPT
+     */
+    private void logClientInfoAttempt(String editType, boolean wasWritten) {
+	
+	String action;
+	if (editType.equals("addClient")) {
+	    action = "addClient_|" + clientInfo.getClientID() + "|" + clientInfo.getAccountNumber() + "|" + clientInfo.getLastName() + "|" + clientInfo.getFirstName() + "|" + clientInfo.getRepNumber();
+	} else if (editType.equals("deleteClient")) {
+	    action = "deleteClient_|" + clientInfo.getClientID() + "|" + clientInfo.getAccountNumber() + "|" + clientInfo.getLastName() + "|"  + clientInfo.getFirstName() + "|" + clientInfo.getRepNumber();
+	} else if (editType.equals("editClient")) {
+	    action = "editClient_|" + clientID;
+	} else {
+	    action = "client_unknown_action";
+	}
+	
+	int status;
+	
+	if (wasWritten) {
+	    status = 1;
+	} else {
+	    status = 0;
+	}
+	
+	final String logQuery = "INSERT INTO UsageLog (`user`, `resource`, `action`, `status`) VALUES ('"+authenticatedUser.getUsername()+"', 'efiling', '"+action+"', '"+status+"')";
+
+	try{
+
+	    //init connection and statement
+	    connection = DatabaseConnectionService.retrieveDatabaseConnection("efilingsys", "WRITE");
+	    statement = connection.createStatement();
+
+	    //execute statement and retrieve resultSet
+	    statement.executeUpdate(logQuery);
+
 	    //close all processing objects
 	    statement.close();		
 	    connection.close();
@@ -187,14 +244,86 @@ public class ClientInformationServiceImpl extends RemoteServiceServlet implement
     }
     
     /**
+     * METHOD: RETRIEVE SELECTED CLIENT
+     * Retrieves clientInfo record based on clientID/key sets clientInfo var.
+     */
+    private void retrieveSelectedClient(String cid) {
+	
+	final String selectQuery = "SELECT acctNum, lastName, firstName, repNum FROM `clientInfo` WHERE `key`='"+cid+"'";
+	
+	try{
+
+	    //init connection and statement
+	    connection = DatabaseConnectionService.retrieveDatabaseConnection("efilingsys", "READ");
+	    statement = connection.createStatement();
+
+	    //execute statement and retrieve resultSet
+	    statement.execute(selectQuery);
+	    results = statement.getResultSet();
+
+	    if (results.next()) {
+		clientInfo = new Client(cid, results.getString(1), results.getString(2), results.getString(3), results.getString(4));
+	    }
+
+	    //close all processing objects
+	    results.close();
+	    statement.close();		
+	    connection.close();
+
+	}catch (SQLException e){
+	    e.printStackTrace();
+	}
+    }
+    
+    /**
+     * METHOD: SELECT LAST CLIENT
+     * @return cid
+     * Retrieves the last clientID/key in the clientInfo database.
+     */
+    private String selectLastClient() {
+	
+	String cid = new String();
+	
+	final String selectQuery = "SELECT MAX(`key`) FROM `clientInfo`";
+	
+	try{
+
+	    //init connection and statement
+	    connection = DatabaseConnectionService.retrieveDatabaseConnection("efilingsys", "READ");
+	    statement = connection.createStatement();
+
+	    //execute statement and retrieve resultSet
+	    statement.execute(selectQuery);
+	    results = statement.getResultSet();
+
+	    if (results.next()) {
+		cid = results.getString(1);
+	    } else {
+		cid = "0";
+	    }
+
+	    //close all processing objects
+	    results.close();
+	    statement.close();		
+	    connection.close();
+
+	}catch (SQLException e){
+	    e.printStackTrace();
+	}
+	
+	return cid;
+	
+    }
+    
+    /**
      * METHOD: UPDATE CLIENT INFORMATION (editClientInformation)
      * Updates the acctNum, lastName, firstName, repNum where the old key. Sets the result message.
      */
-    private void updateDocumentType() {
+    private void updateClientInfo() {
 	
 	final String updateQuery = "UPDATE clientInfo SET acctNum='" + clientAccountNumber + "', lastName='" + clientLastName + "', firstName='" + clientFirstName + "', repNum='" + clientRepNumber + "' WHERE `key`='" + clientID + "'";
 	
-	System.out.println(updateQuery);
+	//System.out.println(updateQuery);
 	
 	try{
 
@@ -205,15 +334,17 @@ public class ClientInformationServiceImpl extends RemoteServiceServlet implement
 	    //execute statement and retrieve resultSet
 	    int updatedRows = statement.executeUpdate(updateQuery);
 
-	    if (updatedRows > 0) {
-		resultMessage = new String("Updated client: " + clientAccountNumber + " - " + clientLastName + ", " + clientFirstName + " | " + clientRepNumber);
-	    } else {
-		resultMessage = new String("Error updating client information: " + clientAccountNumber + " - " + clientLastName + ", " + clientFirstName + " | " + clientRepNumber);
-	    }
-	    
 	    //close all processing objects
 	    statement.close();		
 	    connection.close();
+	    
+	    if (updatedRows > 0) {
+		logClientInfoAttempt("editClient", true);
+		resultMessage = new String("Updated client: " + clientAccountNumber + " - " + clientLastName + ", " + clientFirstName + " | " + clientRepNumber);
+	    } else {
+		logClientInfoAttempt("editClient", false);
+		resultMessage = new String("Error updating client information: " + clientAccountNumber + " - " + clientLastName + ", " + clientFirstName + " | " + clientRepNumber);
+	    }
 	    
 	}catch (SQLException e){
 	    e.printStackTrace();
