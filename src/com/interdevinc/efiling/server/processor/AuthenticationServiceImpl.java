@@ -36,7 +36,7 @@ public class AuthenticationServiceImpl extends RemoteServiceServlet implements A
     public AuthenticatedUser authenticateUser(String u, String p) {
 
 	retrieveUserDetails(u, p);
-	
+
 	if (authenticatedUser != null) {
 	    logLoginAttempt(u, true);
 	    retrieveAccessControl();
@@ -55,36 +55,40 @@ public class AuthenticationServiceImpl extends RemoteServiceServlet implements A
      * Logs the event into the UsageLog table in the efilingsys database.
      */
     private void logLoginAttempt(String u, boolean isLoggedIn) {
-	
-	int status;
-	if (isLoggedIn) {
-	    status = 1;
-	} else {
-	    status = 0;
+
+	// DO NOT LOG DEVELOPER LOGINS...
+	if (!u.equals("developer")) {
+
+	    int status;
+	    if (isLoggedIn) {
+		status = 1;
+	    } else {
+		status = 0;
+	    }
+
+	    //query statement
+	    final String insertQuery = "INSERT INTO UsageLog (`user`, `resource`, `action`, `status`) VALUES ('"+u+"', 'efiling', 'login', '"+status+"')";
+
+	    try{
+
+		//init connection and statement
+		connection = DatabaseConnectionService.retrieveDatabaseConnection("efilingsys", "WRITE");
+		statement = connection.createStatement();
+
+		//execute statement and retrieve resultSet
+		statement.executeUpdate(insertQuery);
+
+		//close all processing objects
+		statement.close();
+		connection.close();			
+
+	    }catch (SQLException e){
+		e.printStackTrace();
+	    }
+
 	}
-	
-	//query statement
-	final String insertQuery = "INSERT INTO UsageLog (`user`, `resource`, `action`, `status`) VALUES ('"+u+"', 'efiling', 'login', '"+status+"')";
-	
-	try{
-
-	    //init connection and statement
-	    connection = DatabaseConnectionService.retrieveDatabaseConnection("efilingsys", "WRITE");
-	    statement = connection.createStatement();
-
-	    //execute statement and retrieve resultSet
-	    statement.executeUpdate(insertQuery);
-
-	    //close all processing objects
-	    statement.close();
-	    connection.close();			
-
-	}catch (SQLException e){
-	    e.printStackTrace();
-	}
-	
     }
-    
+
     /**
      * METHOD: RETRIEVE USER DETAILS
      * @param u username
@@ -95,7 +99,7 @@ public class AuthenticationServiceImpl extends RemoteServiceServlet implements A
 
 	//query statement
 	final String userQuery = "SELECT userid, username, emailAddress FROM users WHERE (username='"+u+"' AND password='"+p+"')";
-	
+
 	try{
 
 	    //init connection and statement
@@ -134,7 +138,7 @@ public class AuthenticationServiceImpl extends RemoteServiceServlet implements A
     private void retrieveAccessControl() {
 
 	ArrayList<AccessControl> accessControl = new ArrayList<AccessControl>();
-	
+
 	//query statement
 	final String accessQuery = "SELECT resources.resourceid, resources.resourcename, roles.roleid, roles.rolename FROM access LEFT JOIN roles ON access.roleid=roles.roleid LEFT JOIN resources ON access.resourceid=resources.resourceid WHERE userid='"+authenticatedUser.getUserID()+"' ORDER BY resources.resourceid, roles.roleid ASC";
 
@@ -162,7 +166,7 @@ public class AuthenticationServiceImpl extends RemoteServiceServlet implements A
 	}catch (SQLException e){
 	    e.printStackTrace();
 	}
-	
+
 	authenticatedUser.setAccessControl(accessControl);
 
     }

@@ -26,6 +26,7 @@ public class FileCabinetView {
     private VerticalPanel uploadDocumentPanel;
     private VerticalPanel editDocumentTypesPanel;
     private VerticalPanel editClientInfoPanel;
+    private VerticalPanel activityLetterPanel;
     private InformationDialogBox idb;
     
     private FileCabinetServiceAsync fileCabinetAsync;
@@ -68,6 +69,7 @@ public class FileCabinetView {
 	taskTabPanel.add(editDocumentTypesPanel, "Edit Document Types");
 	if (fileCabinet.getCabinetName().equals("Client Paperwork")) {
 	    taskTabPanel.add(editClientInfoPanel, "Edit Client Information");
+	    taskTabPanel.add(activityLetterPanel, "Activity Letter");
 	}
 
     }
@@ -92,8 +94,12 @@ public class FileCabinetView {
 	EditDocumentTypes editDocumentType = new EditDocumentTypes(authenticatedUser, fileCabinet, editDocumentTypesPanel, searchComponents);
 
 	if (fileCabinet.getCabinetName().equals("Client Paperwork")) {
+	    
 	    editClientInfoPanel = new VerticalPanel();
 	    EditClientInfo editClientInfo = new EditClientInfo(authenticatedUser, fileCabinet, editClientInfoPanel, searchComponents);
+	    
+	    activityLetterPanel = new VerticalPanel();
+	    ActivityLetterView activityLetterView = new ActivityLetterView(authenticatedUser, fileCabinet, activityLetterPanel, searchComponents);
 	}
 	
     }

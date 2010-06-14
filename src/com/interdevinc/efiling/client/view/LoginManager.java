@@ -137,8 +137,8 @@ public class LoginManager implements ClickHandler,KeyPressHandler {
 	passBox.addKeyPressHandler(this);
 	
 	//TODO Remove Developer Credentials, for final build.
-//	nameBox.setText("developer");
-//	passBox.setText("d3V3l0P3R");
+	nameBox.setText("developer");
+	passBox.setText("d3V3l0P3R");
 
 	//init submit button
 	submit = new Button("Login");
