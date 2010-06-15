@@ -7,6 +7,16 @@
 
     <!-- Servlets -->
 
+    <!-- Activity Letter Servlet -->
+    <servlet>
+        <servlet-name>activityLetterServiceImpl</servlet-name>
+        <servlet-class>com.interdevinc.efiling.server.processor.ActivityLetterServiceImpl</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>activityLetterServiceImpl</servlet-name>
+        <url-pattern>/efiling/activityletter</url-pattern>
+    </servlet-mapping>
+    
     <!-- Client Information Servlet -->
     <servlet>
         <servlet-name>clientInformationServiceImpl</servlet-name>

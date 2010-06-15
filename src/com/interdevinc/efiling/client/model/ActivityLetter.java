@@ -14,8 +14,6 @@ public class ActivityLetter implements IsSerializable {
     private String scannedDocument;
     private String misc;
     
-    private DateTimeFormat dtf = DateTimeFormat.getFormat("MMM dd yyyy");
-    
     /**
      * CONSTRUCTOR: ACTIVITY LETTER (Needed by GWT for Serialization)
      */
@@ -40,12 +38,12 @@ public class ActivityLetter implements IsSerializable {
     
     /**
      * CONSTRUCTOR: ACTIVITY LETTER
-     * @param lid
-     * @param an
-     * @param ds
-     * @param dr
-     * @param sd
-     * @param m
+     * @param lid the letterID
+     * @param an the accountNumber
+     * @param ds the dateSent
+     * @param dr the dateReceived
+     * @param sd the scannedDocument
+     * @param m the misc
      * Most likey used when retrieving an existing Activity Letter from the database for review.
      */
     public ActivityLetter(String lid, String an, Date ds, Date dr, String sd, String m) {
@@ -59,7 +57,7 @@ public class ActivityLetter implements IsSerializable {
 	setMisc(m);
 
     }
-
+    
     /**
      * @return the letterID
      */
@@ -85,7 +83,8 @@ public class ActivityLetter implements IsSerializable {
      * @return date formatted as a string example: "July 11 1980" 
      */
     public String getDateSentFormatted() {
-	return dtf.format(dateSent);
+	DateTimeFormat humanReadableFormat = DateTimeFormat.getFormat("MMM dd yyyy");
+	return humanReadableFormat.format(dateSent);
     }
     
     /**
@@ -99,7 +98,8 @@ public class ActivityLetter implements IsSerializable {
      * @return date formatted as string, example: "July 11 1980"
      */
     public String getDateReceivedFormatted() {
-	return dtf.format(dateReceived);
+	DateTimeFormat humanReadableFormat = DateTimeFormat.getFormat("MMM dd yyyy");
+	return humanReadableFormat.format(dateReceived);
     }
     
     /**
