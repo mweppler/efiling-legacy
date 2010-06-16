@@ -63,6 +63,13 @@ public class ActivityLetterView implements ChangeHandler, ClickHandler {
     private ScannedActivityLettersHandler scannedActivityLettersHandler;
     private UpdateActivityLetterHandler updateActivityLetterHandler;
 
+    /**
+     * CONSTRUCTOR: ACTIVITY LETTER VIEW
+     * @param au the AuthenticatedUser
+     * @param fc the FileCabinet
+     * @param mp the VerticalPanel
+     * @param sc the SearchComponents
+     */
     public ActivityLetterView(AuthenticatedUser au, FileCabinet fc, VerticalPanel mp, SearchComponents sc) {
 
 	authenticatedUser = au;
@@ -77,8 +84,10 @@ public class ActivityLetterView implements ChangeHandler, ClickHandler {
 
     }
 
-
-    @Override
+    /**
+     * METHOD: ON CHANGE
+     * If the updateActivityLetterListbox has changed, call retrieveScannedDocuments()
+     */
     public void onChange(ChangeEvent event) {
 	if (event.getSource().equals(updateActivityLetterListbox)) {
 	    if (updateActivityLetterListbox.getSelectedIndex() > 0) {
@@ -87,7 +96,10 @@ public class ActivityLetterView implements ChangeHandler, ClickHandler {
 	}
     }
 
-    @Override
+    /**
+     * METHOD: ON CLICK
+     * Submits either a new activity letter(submitNewActivityLetterButton) or updates and existing one(submitUpdateActivityLetterButton).
+     */
     public void onClick(ClickEvent event) {
 
 	// New Activity Letter
@@ -159,7 +171,7 @@ public class ActivityLetterView implements ChangeHandler, ClickHandler {
 			activityLetterClients.get(updateActivityLetterListbox.getSelectedIndex() - 1).getDateSent(),
 			tempDate,
 			scannedActivityLetters.get(scannedDocumentListbox.getSelectedIndex() - 1).getUploadID(),
-			"");
+		"");
 		// Comment me out...
 		idb.messageDialogBox(1, "Update Activity Letter", 
 			"LetterID: " + activityLetter.getLetterID() + "<br />" +
@@ -173,8 +185,12 @@ public class ActivityLetterView implements ChangeHandler, ClickHandler {
 
     }
 
+    /**
+     * METHOD: ASSEMBLE INITIAL COMPONENTS
+     * Assmebles the pages initial components.
+     */
     private void assembleInitialComponents() {
-	
+
 	// New Activity Letter
 	mainTabPanel.add(newActivityLetterPanel, "Add New Activity Letter");
 	clientListbox.addItem("Select a Client");
@@ -190,11 +206,15 @@ public class ActivityLetterView implements ChangeHandler, ClickHandler {
 
 	// Update Activity Letter
 	updateActivityLetterListbox.clear();
-	
+
 	mainTabPanel.add(updateActivityLetterPanel, "Update Activity Letter");
-	updateActivityLetterListbox.addItem("Select a Client");
-	for (ActivityLetter alc : activityLetterClients) {
-	    updateActivityLetterListbox.addItem(alc.getAccountNumber() + " | " + alc.getDateSentFormatted());
+	if (activityLetterClients!=null) {
+	    updateActivityLetterListbox.addItem("Select a Client");
+	    for (ActivityLetter alc : activityLetterClients) {
+		updateActivityLetterListbox.addItem(alc.getAccountNumber() + " | " + alc.getDateSentFormatted());
+	    }
+	} else {
+	    updateActivityLetterListbox.addItem("No open Activity Letters.");
 	}
 	updateActivityLetterListbox.addChangeHandler(this);
 	letterReceivedDatebox.setFormat(new DateBox.DefaultFormat(dateFieldFormat));
@@ -214,6 +234,9 @@ public class ActivityLetterView implements ChangeHandler, ClickHandler {
 
     }
 
+    /**
+     * METHOD: INITIALIZE INITIAL COMPONENTS
+     */
     private void initializeInitialComponents() {
 
 	mainTabPanel = new DecoratedTabPanel();
@@ -252,19 +275,30 @@ public class ActivityLetterView implements ChangeHandler, ClickHandler {
 
     }
 
+    /**
+     * METHOD: RETRIEVE ACTIVITY LETTER CLIENTS
+     * Gets a list of clients with existing activity letters that need updating
+     */
     private void retrieveActivityLetterClients() {
 	activityLetterAsync.retrieveClientsWithNullUpdates(authenticatedUser, activityLetterClientsHandler);
     }
 
+    /**
+     * LOAD INITIAL COMPONENTS
+     */
     private void loadInitialComponents() {
 
 	mainPanel.clear();
-	
+
 	initializeInitialComponents();
 	assembleInitialComponents();
 
     }
 
+    /**
+     * METHOD: LOAD SCANNED DOCUMENTS
+     * Loads the returned list of scanned activity letters that need to be associated with a given client.
+     */
     private void loadScannedDocuments() {
 	scannedDocumentListbox.clear();
 	if (scannedActivityLetters != null) {
@@ -277,6 +311,10 @@ public class ActivityLetterView implements ChangeHandler, ClickHandler {
 	}
     }
 
+    /**
+     * METHOD: RETRIEVE SCANNED DOCUMENTS
+     * Gets a list of scanned activity letters that need to be associated with a given client.
+     */
     private void retrieveScannedDocuments() {
 	activityLetterAsync.retrieveScannedActivityLetterForClient(authenticatedUser, activityLetterClients.get(updateActivityLetterListbox.getSelectedIndex() - 1).getAccountNumber(), scannedActivityLettersHandler);
     }
@@ -318,6 +356,7 @@ public class ActivityLetterView implements ChangeHandler, ClickHandler {
 	@Override
 	public void onSuccess(String resultMessage) {
 	    idb.messageDialogBox(1, "Submit New Activity Letter", resultMessage);
+	    retrieveActivityLetterClients();
 	}
 
     }

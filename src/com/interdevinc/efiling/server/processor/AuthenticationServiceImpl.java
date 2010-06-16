@@ -86,6 +86,8 @@ public class AuthenticationServiceImpl extends RemoteServiceServlet implements A
 		e.printStackTrace();
 	    }
 
+	} else {
+	    System.out.println("developer logged in.");
 	}
     }
 

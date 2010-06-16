@@ -57,8 +57,8 @@ public class UploadDocument implements ClickHandler, FormPanel.SubmitCompleteHan
 	mainPanel = mp;
 	idb = new InformationDialogBox();
 
-	initializeInitialComponents();
-	assembleInitialComponents();
+	loadFormComponents();
+	
     }
 
     /**
@@ -118,6 +118,7 @@ public class UploadDocument implements ClickHandler, FormPanel.SubmitCompleteHan
      * The on submit complete method, waits for a response message and displays it in a dialog box.
      */
     public void onSubmitComplete(SubmitCompleteEvent event) {
+	loadFormComponents();
 	InformationDialogBox idb = new InformationDialogBox();
 	idb.messageDialogBox(1, "File Upload Result", event.getResults());
     }
@@ -185,7 +186,6 @@ public class UploadDocument implements ClickHandler, FormPanel.SubmitCompleteHan
 	
     }
 
-
     /**
      * METHOD: INITIALIZE INITIAL COMPONENTS
      */
@@ -210,5 +210,14 @@ public class UploadDocument implements ClickHandler, FormPanel.SubmitCompleteHan
 	
     }
 
-
+    /**
+     * METHOD: LOAD FORM COMPONENTS
+     */
+    private void loadFormComponents() {
+	
+	initializeInitialComponents();
+	assembleInitialComponents();
+	
+    }
+    
 }

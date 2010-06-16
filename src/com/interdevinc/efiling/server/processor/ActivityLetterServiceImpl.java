@@ -36,6 +36,10 @@ public class ActivityLetterServiceImpl extends RemoteServiceServlet implements A
     public ActivityLetterServiceImpl() {
     }
 
+    /**
+     * METHOD: ADD NEW ACTIVITY LETTER
+     * Checks for an existing entry & inserts a new entry in the database.
+     */
     public String addNewActivityLetter(AuthenticatedUser au, String an, String ds) {
 
 	authenticatedUser = au;
@@ -57,6 +61,11 @@ public class ActivityLetterServiceImpl extends RemoteServiceServlet implements A
 	return resultMessage;
     }
 
+    /**
+     * METHOD: RETRIEVE CLIENTS WITH NULL UPDATES
+     * @return activityLetter
+     * Returns an arraylist of ActivityLetters where the receieved fields is null. This means an activity letter exists and needs updating.
+     */
     public ArrayList<ActivityLetter> retrieveClientsWithNullUpdates(AuthenticatedUser au) {
 
 	ArrayList<ActivityLetter> activityLetter = new ArrayList<ActivityLetter>();
@@ -92,6 +101,11 @@ public class ActivityLetterServiceImpl extends RemoteServiceServlet implements A
 	return activityLetter;
     }
 
+    /**
+     * METHOD: RETRIEVE SCANNED ACTIVITY LETTER FOR CLIENT
+     * @return scannedDocument
+     * Returns an arraylist of ScannedDocuments where the client account number matches the request.
+     */
     public ArrayList<ScannedDocument> retrieveScannedActivityLetterForClient(AuthenticatedUser au, String acctNum) {
 
 	ArrayList<ScannedDocument> scannedDocument = new ArrayList<ScannedDocument>();
@@ -128,6 +142,11 @@ public class ActivityLetterServiceImpl extends RemoteServiceServlet implements A
 
     }
 
+    /**
+     * METHOD: UPDATE ACTIVITY LETTER
+     * @return resultMessage
+     * Updates the ActivityLetter table with a dateReceived, and scannedDocument
+     */
     public String updateActivityLetter(AuthenticatedUser au, ActivityLetter al) {
 	
 	String resultMessage = new String();
@@ -161,6 +180,11 @@ public class ActivityLetterServiceImpl extends RemoteServiceServlet implements A
 	
     }
 
+    /**
+     * METHOD: CHECK FOR EXISTING ENTRY
+     * @return entryExists
+     * Checks the ActivityLetter table for a record that matches the accountNumber and dateSent
+     */
     private boolean checkForExistingEntry() {
 
 	boolean entryExists = true;
@@ -193,6 +217,11 @@ public class ActivityLetterServiceImpl extends RemoteServiceServlet implements A
 
     }
 
+    /**
+     * METHOD: INSERT ACTIVITY LETTER DATA
+     * @return dataEntered
+     * Inserts a new record into the ActivityLetter table.
+     */
     private boolean insertActivityLetterData() {
 
 	boolean dataEntered = false;
