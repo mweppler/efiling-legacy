@@ -48,6 +48,11 @@ public class LoginManager implements ClickHandler,KeyPressHandler {
 	initializeComponents();
 	initializeRemoteProcedureWorkers();
 	assembleComponents();
+	
+	//TODO Remove Developer Credentials, when compiling for deployment.
+//	nameBox.setText("developer");
+//	passBox.setText("d3V3l0P3R");
+	
     }
 
     /**
@@ -135,10 +140,6 @@ public class LoginManager implements ClickHandler,KeyPressHandler {
 	passBox = new PasswordTextBox();		
 	passBox.setWidth("100px");
 	passBox.addKeyPressHandler(this);
-	
-	//TODO Remove Developer Credentials, when compiling for deployment.
-//	nameBox.setText("developer");
-//	passBox.setText("d3V3l0P3R");
 
 	//init submit button
 	submit = new Button("Login");

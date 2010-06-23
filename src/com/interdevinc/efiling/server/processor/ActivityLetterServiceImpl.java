@@ -4,8 +4,11 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.interdevinc.efiling.client.model.ActivityLetter;
@@ -27,9 +30,10 @@ public class ActivityLetterServiceImpl extends RemoteServiceServlet implements A
     private AuthenticatedUser authenticatedUser;
     private String accountNumber;
     private String dateSent;
+    private ActivityLetter activityLetter;
 
     private SimpleDateFormat databaseFormat = new SimpleDateFormat("yyyyMMdd");
-    
+
     /**
      * CONSTRUCTOR: ACTIVITY LETTER SERVICE IMPL
      */
@@ -143,12 +147,45 @@ public class ActivityLetterServiceImpl extends RemoteServiceServlet implements A
     }
 
     /**
+     * METHOD: RETRIEVE THRITY DAY NOT RECEIVED STATUS
+     * @return activityLetters
+     */
+    public ArrayList<ActivityLetter> retrieveThrityDayNotReceivedStatus(AuthenticatedUser au) {
+
+	ArrayList<ActivityLetter> activityLetters = retrieveClientsWithNullUpdates(au);
+
+	if (activityLetters != null) {
+	    updateActivityLetterStatus30Day(activityLetters);
+	}
+
+	return activityLetters;
+
+    }
+
+    /**
+     * METHOD: RETRIEVE TWELVE MONTH STATUS
+     * @return
+     */
+    public ActivityLetter retrieveTwelveMonthStatus(AuthenticatedUser au, String acctNum) {
+
+	ActivityLetter activityLetter = fetchActivityLetterByAccount(acctNum);
+
+	if (activityLetter.getMisc().equals("No Activity Letter on file.")) {
+	} else {
+	    updateActivityLetterStatus12Day(activityLetter);
+	}
+	
+	return activityLetter;
+
+    }
+
+    /**
      * METHOD: UPDATE ACTIVITY LETTER
      * @return resultMessage
      * Updates the ActivityLetter table with a dateReceived, and scannedDocument
      */
     public String updateActivityLetter(AuthenticatedUser au, ActivityLetter al) {
-	
+
 	String resultMessage = new String();
 
 	final String insertQuery = "UPDATE ActivityLetter SET dateReceieved='"+databaseFormat.format(al.getDateReceived())+"', scannedDocumentID='"+al.getScannedDocument()+"', misc='"+al.getMisc()+"' WHERE letterID='"+al.getLetterID()+"' ";
@@ -177,9 +214,92 @@ public class ActivityLetterServiceImpl extends RemoteServiceServlet implements A
 	}
 
 	return resultMessage;
-	
+
     }
 
+    
+    /**
+     * METHOD: CALCULATE DATE ONE YEAR AGO
+     * @return dateOneYearAgo
+     */
+    private String calculateDateOneYearAgo() {
+
+	Calendar today = Calendar.getInstance();
+
+	today.add(Calendar.YEAR, -1);
+
+	int intYear = today.get(Calendar.YEAR);
+	int intMonth = today.get(Calendar.MONTH) + 1;
+	int intDay = today.get(Calendar.DAY_OF_MONTH);
+
+	String strMonth;
+	String strDay;
+
+	if (intMonth < 10) {
+	    strMonth = "0" + intMonth;
+	} else {
+	    strMonth = intMonth + "";
+	}
+
+	if (intDay < 10) {
+	    strDay = "0" + intDay;
+	} else {
+	    strDay = intDay + "";
+	}
+
+	String dateOneYearAgo = intYear + strMonth + strDay;
+
+	return dateOneYearAgo;
+
+    }
+
+    
+    /**
+     * METHOD: CALCULATE DATE THRITY DAYS FROM NOW
+     * @return dateThrityDaysFromNow
+     */
+    private String calculateDateThrityDaysFromNow(String dateSent) {
+
+	String dateThrityDaysFromNow = new String();
+
+	try {
+
+	    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+	    Date dateDue = sdf.parse(dateSent);
+
+	    Calendar dueDate = Calendar.getInstance();
+	    dueDate.setTime(dateDue);
+
+	    int intYear = dueDate.get(Calendar.YEAR);
+	    int intMonth = dueDate.get(Calendar.MONTH) + 1;
+	    int intDay = dueDate.get(Calendar.DAY_OF_MONTH);
+
+	    String strMonth;
+	    String strDay;
+
+	    if (intMonth < 10) {
+		strMonth = "0" + intMonth;
+	    } else {
+		strMonth = intMonth + "";
+	    }
+
+	    if (intDay < 10) {
+		strDay = "0" + intDay;
+	    } else {
+		strDay = intDay + "";
+	    }
+
+	    dateThrityDaysFromNow = intYear + strMonth + strDay;
+
+	} catch (ParseException pe) {
+	    pe.printStackTrace();
+	}
+
+	return dateThrityDaysFromNow;
+
+    }
+
+    
     /**
      * METHOD: CHECK FOR EXISTING ENTRY
      * @return entryExists
@@ -217,6 +337,7 @@ public class ActivityLetterServiceImpl extends RemoteServiceServlet implements A
 
     }
 
+    
     /**
      * METHOD: INSERT ACTIVITY LETTER DATA
      * @return dataEntered
@@ -250,6 +371,122 @@ public class ActivityLetterServiceImpl extends RemoteServiceServlet implements A
 	}
 
 	return dataEntered;
+
+    }
+
+    
+    /**
+     * METHOD: FETCH ACTIVITY LETTER BY ACCOUNT 
+     * @param acctNum
+     * @return activityLetter
+     */
+    private ActivityLetter fetchActivityLetterByAccount(String acctNum) {
+
+	final String selectQuery = "SELECT letterID, accountNumber, MAX(dateSent), dateReceieved, scannedDocumentID, misc FROM `ActivityLetter` WHERE accountNumber='"+acctNum+"'";
+
+	System.out.println(selectQuery);
+
+	try{
+
+	    //init connection and statement
+	    connection = DatabaseConnectionService.retrieveDatabaseConnection("efilingsys", "READ");
+	    statement = connection.createStatement();
+
+	    statement.execute(selectQuery);
+	    results = statement.getResultSet();
+
+	    if (results.next()) {
+		activityLetter = new ActivityLetter(results.getString(1), results.getString(2), results.getDate(3), results.getDate(4), results.getString(5), results.getString(6));
+	    }
+
+	    //close all processing objects
+	    results.close();
+	    statement.close();		
+	    connection.close();
+
+	}catch (SQLException e){
+	    e.printStackTrace();
+	}
+
+	try {
+	    databaseFormat.format(activityLetter.getDateReceived());
+	} catch (NullPointerException npe) {
+	    activityLetter = new ActivityLetter(null, acctNum, null, null, null, "No Activity Letter on file.");
+	}
+	
+	return activityLetter;
+
+    }
+
+    /**
+     * METHOD: TODAYS DATE AS STRING
+     * @return todayAsString
+     */
+    private String todaysDateAsString() {
+
+	Calendar today = Calendar.getInstance();
+
+	int intYear = today.get(Calendar.YEAR);
+	int intMonth = today.get(Calendar.MONTH) + 1;
+	int intDay = today.get(Calendar.DAY_OF_MONTH);
+
+	String strMonth;
+	String strDay;
+
+	if (intMonth < 10) {
+	    strMonth = "0" + intMonth;
+	} else {
+	    strMonth = intMonth + "";
+	}
+
+	if (intDay < 10) {
+	    strDay = "0" + intDay;
+	} else {
+	    strDay = intDay + "";
+	}
+
+	String todayAsString = intYear + strMonth + strDay;
+
+	return todayAsString;
+
+    }
+
+    
+    /**
+     * METHOD: UPDATE ACTIVITY LETTER STATUS 12 DAY
+     */
+    private void updateActivityLetterStatus12Day(ActivityLetter al) {
+
+	Date dateReceived = al.getDateReceived();
+	String dateRecieved = databaseFormat.format(dateReceived);
+	String dateOneYearAgo = calculateDateOneYearAgo();
+
+	if (Integer.parseInt(dateOneYearAgo) > Integer.parseInt(dateRecieved)) {
+	    al.setMisc("Client has been sent an Activity Letter in the past 12 months: " + dateRecieved);
+	} else {
+	    al.setMisc("Client has not been sent an Activity Letter in the past 12 months: " + dateRecieved);
+	}
+
+    }
+
+    /**
+     * METHOD: UPDATE ACTIVITY LETTER STATUS 30 DAY
+     */
+    private void updateActivityLetterStatus30Day(ArrayList<ActivityLetter> al) {
+
+	String today = todaysDateAsString();
+
+	for (ActivityLetter activityLetters : al) {
+
+	    String thrityDaysFromNow = calculateDateThrityDaysFromNow(activityLetters.getDateSentAsDatabaseString());
+
+	    if (Integer.parseInt(today) > Integer.parseInt(thrityDaysFromNow)) {
+		activityLetters.setMisc("Activity Letter is Past the 30 day due date of: " + thrityDaysFromNow);
+	    } else {
+		activityLetters.setMisc("Activity Letter is due of: " + thrityDaysFromNow);
+	    }
+
+	}
 
     }
 

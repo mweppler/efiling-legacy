@@ -1,6 +1,7 @@
 package com.interdevinc.efiling.client.view;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 import com.google.gwt.core.client.GWT;
@@ -12,6 +13,8 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DecoratedTabPanel;
+import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -51,6 +54,15 @@ public class ActivityLetterView implements ChangeHandler, ClickHandler {
     private NewActivityLetterHandler newActivityLetterHandler;
 
     // Search Activity Letter Components
+    private Grid mainDivderGrid;
+    private VerticalPanel client12MonthPanel;
+    private VerticalPanel client30dayPanel;
+    private ListBox clientListbox12Month;
+    private Label resultsLabel;
+    private FlexTable client30dayResultsTable;
+    private Button refresh30DayButton;
+    private ThrityDayNotReturnedActivityLetterHandler thrityDayNotReturnedActivityLetterHandler;
+    private TwelveMonthActivityLetterHandler twelveMonthActivityLetterHandler;
 
     // Update Activity Letter Components
     private ArrayList<ActivityLetter> activityLetterClients;
@@ -89,11 +101,22 @@ public class ActivityLetterView implements ChangeHandler, ClickHandler {
      * If the updateActivityLetterListbox has changed, call retrieveScannedDocuments()
      */
     public void onChange(ChangeEvent event) {
+
+	// Search Activity Letter Status
+	if (event.getSource().equals(clientListbox12Month)) {
+	    if (clientListbox12Month.getSelectedIndex() > 0) {
+		activityLetterAsync.retrieveTwelveMonthStatus(authenticatedUser, searchComponents.getClientList().get(clientListbox12Month.getSelectedIndex() - 1).getAccountNumber(), twelveMonthActivityLetterHandler);
+	    }
+	}
+
+	// Update Activity Letter
 	if (event.getSource().equals(updateActivityLetterListbox)) {
 	    if (updateActivityLetterListbox.getSelectedIndex() > 0) {
 		retrieveScannedDocuments();
 	    }
 	}
+
+
     }
 
     /**
@@ -130,6 +153,11 @@ public class ActivityLetterView implements ChangeHandler, ClickHandler {
 		idb.messageDialogBox(1, "Submit New Activity Letter", "Account#: " + accountNumber + " | Date Sent: " + databaseTimeFormat.format(letterSentDatebox.getValue()));
 	    }
 
+	}
+
+	// Search Activity Letter Status
+	if (event.getSource().equals(refresh30DayButton)) {
+	    activityLetterAsync.retrieveThrityDayNotReceivedStatus(authenticatedUser, thrityDayNotReturnedActivityLetterHandler);
 	}
 
 	// Update Activity Letter
@@ -176,8 +204,8 @@ public class ActivityLetterView implements ChangeHandler, ClickHandler {
 		idb.messageDialogBox(1, "Update Activity Letter", 
 			"LetterID: " + activityLetter.getLetterID() + "<br />" +
 			"Account#: " + activityLetter.getAccountNumber() + "<br />" +
-			"Date Sent: " + activityLetter.getDateSentFormatted() + "<br />" +
-			"Date Received: " + activityLetter.getDateReceivedFormatted() + "<br />" +
+			"Date Sent: " + activityLetter.getDateSentFormattedString() + "<br />" +
+			"Date Received: " + activityLetter.getDateReceivedFormattedString() + "<br />" +
 			"Scanned Document: " + activityLetter.getScannedDocument());
 		activityLetterAsync.updateActivityLetter(authenticatedUser, activityLetter, updateActivityLetterHandler);
 	    }
@@ -190,6 +218,8 @@ public class ActivityLetterView implements ChangeHandler, ClickHandler {
      * Assmebles the pages initial components.
      */
     private void assembleInitialComponents() {
+
+	mainPanel.add(mainTabPanel);
 
 	// New Activity Letter
 	mainTabPanel.add(newActivityLetterPanel, "Add New Activity Letter");
@@ -211,7 +241,7 @@ public class ActivityLetterView implements ChangeHandler, ClickHandler {
 	if (activityLetterClients!=null) {
 	    updateActivityLetterListbox.addItem("Select a Client");
 	    for (ActivityLetter alc : activityLetterClients) {
-		updateActivityLetterListbox.addItem(alc.getAccountNumber() + " | " + alc.getDateSentFormatted());
+		updateActivityLetterListbox.addItem(alc.getAccountNumber() + " | " + alc.getDateSentFormattedString());
 	    }
 	} else {
 	    updateActivityLetterListbox.addItem("No open Activity Letters.");
@@ -229,8 +259,19 @@ public class ActivityLetterView implements ChangeHandler, ClickHandler {
 
 	// Search Activity Letter
 	mainTabPanel.add(searchActivityLetterPanel, "Search Activity Letter");
-
-	mainPanel.add(mainTabPanel);
+	clientListbox12Month.addItem("Select a Client");
+	for (Client clientInfo : searchComponents.getClientList()) {
+	    clientListbox12Month.addItem(clientInfo.getClientFullInfo());
+	}
+	clientListbox12Month.addChangeHandler(this);
+	refresh30DayButton.addClickHandler(this);
+	client12MonthPanel.add(clientListbox12Month);
+	client12MonthPanel.add(resultsLabel);
+	client30dayPanel.add(refresh30DayButton);
+	client30dayPanel.add(client30dayResultsTable);
+	mainDivderGrid.setWidget(0, 0, client12MonthPanel);
+	mainDivderGrid.setWidget(0, 1, client30dayPanel);
+	searchActivityLetterPanel.add(mainDivderGrid);
 
     }
 
@@ -256,6 +297,13 @@ public class ActivityLetterView implements ChangeHandler, ClickHandler {
 
 	// Search Activity Letter
 	searchActivityLetterPanel = new VerticalPanel();
+	mainDivderGrid = new Grid(1, 2);
+	client12MonthPanel = new VerticalPanel();
+	client30dayPanel = new VerticalPanel();
+	clientListbox12Month = new ListBox();
+	resultsLabel = new Label();
+	refresh30DayButton = new Button("Refresh");
+	client30dayResultsTable = new FlexTable();
 
     }
 
@@ -271,6 +319,8 @@ public class ActivityLetterView implements ChangeHandler, ClickHandler {
 	activityLetterClientsHandler = new ActivityLetterClientsHandler();
 	scannedActivityLettersHandler = new ScannedActivityLettersHandler();
 	newActivityLetterHandler = new NewActivityLetterHandler();
+	thrityDayNotReturnedActivityLetterHandler = new ThrityDayNotReturnedActivityLetterHandler();
+	twelveMonthActivityLetterHandler = new TwelveMonthActivityLetterHandler();
 	updateActivityLetterHandler = new UpdateActivityLetterHandler();
 
     }
@@ -309,6 +359,44 @@ public class ActivityLetterView implements ChangeHandler, ClickHandler {
 	} else {
 	    scannedDocumentListbox.addItem("No Activity Letter uploaded for selected client");
 	}
+    }
+
+    /**
+     * METHOD: LOAD THRITY DAY NON RETURNED LIST
+     * @param c30 arraylist of activityLetters
+     * Prints a table of Activity Letter data.
+     */
+    private void loadThrityDayNonReturnedList(ArrayList<ActivityLetter> c30) {
+
+	if (c30 != null) {
+	    int row = 0;
+
+	    client30dayResultsTable.setText(row, 0, "Account#");
+	    client30dayResultsTable.setText(row, 1, "Date Sent");
+	    client30dayResultsTable.setText(row, 2, "Status");
+	    ++row;
+
+	    for (ActivityLetter activityLetter : c30) {
+		client30dayResultsTable.setText(row, 0, activityLetter.getAccountNumber());
+		client30dayResultsTable.setText(row, 1, activityLetter.getDateSentFormattedString());
+		client30dayResultsTable.setText(row, 2, activityLetter.getMisc());
+		++row;
+	    }
+	} else {
+	    client30dayResultsTable.setText(0, 0, "No Results Returned.");
+	}
+
+    }
+
+    /**
+     * METHOD: LOAD TWELVE MONTH ACTIVITY LETTER STATUS
+     * @param c12 activityLetter
+     */
+    private void loadTwelveMonthActivityLetterStatus(ActivityLetter c12) {
+
+	String status = c12.getAccountNumber() + " - " + c12.getMisc(); 
+	resultsLabel.setText(status);
+
     }
 
     /**
@@ -388,6 +476,44 @@ public class ActivityLetterView implements ChangeHandler, ClickHandler {
      * @author mweppler
      * GWT AsyncCallback
      */
+    private class ThrityDayNotReturnedActivityLetterHandler implements AsyncCallback<ArrayList<ActivityLetter>> {
+
+	@Override
+	public void onFailure(Throwable caught) {
+	    idb.messageDialogBox(0, "30 Day non-returned Activity Letters", "RPC Failure.");
+	}
+
+	@Override
+	public void onSuccess(ArrayList<ActivityLetter> client30DayNonReturned) {
+	    loadThrityDayNonReturnedList(client30DayNonReturned);
+	}
+
+    }
+
+    /**
+     * PRIVATE CLASS: TWELVE MONTH ACTIVITY LETTER HANDLER
+     * @author mweppler
+     * GWT AsyncCallback
+     */
+    private class TwelveMonthActivityLetterHandler implements AsyncCallback<ActivityLetter> {
+
+	@Override
+	public void onFailure(Throwable caught) {
+	    idb.messageDialogBox(0, "Client 12 Month Activity Letter Status", "RPC Failure.");
+	}
+
+	@Override
+	public void onSuccess(ActivityLetter client12MonthActivityLetterStatus) {
+	    loadTwelveMonthActivityLetterStatus(client12MonthActivityLetterStatus);
+	}
+
+    }
+
+    /**
+     * PRIVATE CLASS: UPDATE ACTIVITY LETTER HANDLER
+     * @author mweppler
+     * GWT AsyncCallback
+     */
     private class UpdateActivityLetterHandler implements AsyncCallback<String> {
 
 	@Override
@@ -402,6 +528,5 @@ public class ActivityLetterView implements ChangeHandler, ClickHandler {
 	}
 
     }
-
 
 }

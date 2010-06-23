@@ -15,6 +15,10 @@ public interface ActivityLetterServiceAsync {
 
     public void retrieveScannedActivityLetterForClient(AuthenticatedUser au, String acctNum, AsyncCallback<ArrayList<ScannedDocument>> callback);
     
+    public void retrieveThrityDayNotReceivedStatus(AuthenticatedUser au, AsyncCallback<ArrayList<ActivityLetter>> callback);
+    
+    public void retrieveTwelveMonthStatus(AuthenticatedUser au, String acctNum, AsyncCallback<ActivityLetter> callback);
+    
     public void updateActivityLetter(AuthenticatedUser au, ActivityLetter al, AsyncCallback<String> callback);
     
 }

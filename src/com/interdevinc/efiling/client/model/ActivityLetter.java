@@ -78,11 +78,19 @@ public class ActivityLetter implements IsSerializable {
     public Date getDateSent() {
         return dateSent;
     }
+    
+    /**
+     * @return database formatted date as a string (example: "19800711")
+     */
+    public String getDateSentAsDatabaseString() {
+	DateTimeFormat datebaseFormat = DateTimeFormat.getFormat("yyyyMMdd");
+	return datebaseFormat.format(dateSent);
+    }
 
     /**
-     * @return date formatted as a string example: "July 11 1980" 
+     * @return date formatted as a human readable string (example: "July 11 1980") 
      */
-    public String getDateSentFormatted() {
+    public String getDateSentFormattedString() {
 	DateTimeFormat humanReadableFormat = DateTimeFormat.getFormat("MMM dd yyyy");
 	return humanReadableFormat.format(dateSent);
     }
@@ -93,11 +101,19 @@ public class ActivityLetter implements IsSerializable {
     public Date getDateReceived() {
         return dateReceived;
     }
+    
+    /**
+     * @return database date formatted as string, (example: "19800711")
+     */
+    public String getDateReceivedAsDatabaseString() {
+	DateTimeFormat humanReadableFormat = DateTimeFormat.getFormat("yyyyMMdd");
+	return humanReadableFormat.format(dateReceived);
+    }
 
     /**
      * @return date formatted as string, example: "July 11 1980"
      */
-    public String getDateReceivedFormatted() {
+    public String getDateReceivedFormattedString() {
 	DateTimeFormat humanReadableFormat = DateTimeFormat.getFormat("MMM dd yyyy");
 	return humanReadableFormat.format(dateReceived);
     }
