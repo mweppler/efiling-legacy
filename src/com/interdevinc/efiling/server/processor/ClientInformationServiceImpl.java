@@ -11,6 +11,7 @@ import com.interdevinc.efiling.client.model.Client;
 import com.interdevinc.efiling.client.model.FileCabinet;
 import com.interdevinc.efiling.client.processor.ClientInformationService;
 
+@SuppressWarnings("unused")
 public class ClientInformationServiceImpl extends RemoteServiceServlet implements ClientInformationService {
 
     /**

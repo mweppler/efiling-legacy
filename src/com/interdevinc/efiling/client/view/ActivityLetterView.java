@@ -1,7 +1,6 @@
 package com.interdevinc.efiling.client.view;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 
 import com.google.gwt.core.client.GWT;
@@ -33,6 +32,7 @@ public class ActivityLetterView implements ChangeHandler, ClickHandler {
 
     // Models
     private AuthenticatedUser authenticatedUser;
+    @SuppressWarnings("unused")
     private FileCabinet fileCabinet;
     private SearchComponents searchComponents;
     private InformationDialogBox idb;

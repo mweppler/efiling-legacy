@@ -25,6 +25,7 @@ import com.interdevinc.efiling.client.processor.FileCabinetService;
 import com.interdevinc.efiling.client.processor.FileCabinetServiceAsync;
 import com.interdevinc.efiling.shared.view.InformationDialogBox;
 
+@SuppressWarnings("unused")
 public class SearchDocuments implements ChangeHandler {
 
     // Panels
@@ -36,7 +37,7 @@ public class SearchDocuments implements ChangeHandler {
     private ListBox cabinetTypeInfoList;
     private ListBox documentTypeList;
     private MultiWordSuggestOracle searchOracle;
-    private SuggestBox quickSearchSuggestbox;
+	private SuggestBox quickSearchSuggestbox;
     private TextBox quickSearchTextbox;
 
     private AuthenticatedUser authenticatedUser;

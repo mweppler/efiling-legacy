@@ -314,6 +314,7 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
     /**
      * METHOD: CREATE CONNECTION ACCESS RIGHTS (NOT YET IMPLEMENTED)
      */
+    @SuppressWarnings("unused")
     private void createConnectionAccessRights() {
 
 	for (AccessControl accessControl: authenticatedUser.getAccessControl()) {

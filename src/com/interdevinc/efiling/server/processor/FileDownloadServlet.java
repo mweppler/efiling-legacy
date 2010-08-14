@@ -163,6 +163,7 @@ public class FileDownloadServlet extends HttpServlet {
 //	    System.out.println("Canonical path is: " + file.getCanonicalPath());
 	    
 	    outputStream = response.getOutputStream();
+	    @SuppressWarnings("unused")
 	    ServletContext context = getServletConfig().getServletContext(); 
 	    response.setContentType(scannedDocument.getFileType()); 
 	    response.setContentLength((int) file.length()); 

@@ -27,7 +27,8 @@ public class ActivityLetterServiceImpl extends RemoteServiceServlet implements A
     private Statement statement;
     private ResultSet results;
 
-    private AuthenticatedUser authenticatedUser;
+    @SuppressWarnings("unused")
+	private AuthenticatedUser authenticatedUser;
     private String accountNumber;
     private String dateSent;
     private ActivityLetter activityLetter;
