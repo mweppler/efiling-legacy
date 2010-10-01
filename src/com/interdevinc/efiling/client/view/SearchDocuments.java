@@ -28,242 +28,246 @@ import com.interdevinc.efiling.shared.view.InformationDialogBox;
 @SuppressWarnings("unused")
 public class SearchDocuments implements ChangeHandler {
 
-    // Panels
-    private VerticalPanel searchDocumentsPanel;
-    private FlexTable searchComponentsTable;
-    private FlexTable searchResultsTable;
-    private InformationDialogBox idb;
+	// Panels
+	private VerticalPanel searchDocumentsPanel;
+	private FlexTable searchComponentsTable;
+	private FlexTable searchResultsTable;
+	private InformationDialogBox idb;
 
-    private ListBox cabinetTypeInfoList;
-    private ListBox documentTypeList;
-    private MultiWordSuggestOracle searchOracle;
+	private ListBox cabinetTypeInfoList;
+	private ListBox documentTypeList;
+	private MultiWordSuggestOracle searchOracle;
 	private SuggestBox quickSearchSuggestbox;
-    private TextBox quickSearchTextbox;
+	private TextBox quickSearchTextbox;
 
-    private AuthenticatedUser authenticatedUser;
-    private FileCabinet fileCabinet;
-    private SearchComponents searchComponents;
-    private ArrayList<ScannedDocument> scannedDocuments;
+	private AuthenticatedUser authenticatedUser;
+	private FileCabinet fileCabinet;
+	private SearchComponents searchComponents;
+	private ArrayList<ScannedDocument> scannedDocuments;
 
-    private FileCabinetServiceAsync fileCabinetAsync; 
-    private SearchResultsHandler searchResultsHandler;
+	private FileCabinetServiceAsync fileCabinetAsync; 
+	private SearchResultsHandler searchResultsHandler;
 
-    /**
-     * CONSTRUCTOR: SEARCH DOCUMENTS
-     * @param au the authenticatedUser to set
-     * @param fc the FileCabinet to set
-     * @param sdp the VerticalPanel to set
-     * @param sc the SearchComponents to set
-     */
-    public SearchDocuments(AuthenticatedUser au, FileCabinet fc, VerticalPanel sdp, SearchComponents sc) {
-	authenticatedUser = au;
-	fileCabinet = fc;
-	searchDocumentsPanel = sdp;
-	searchComponents = sc;
+	/**
+	 * CONSTRUCTOR: SEARCH DOCUMENTS
+	 * @param au the authenticatedUser to set
+	 * @param fc the FileCabinet to set
+	 * @param sdp the VerticalPanel to set
+	 * @param sc the SearchComponents to set
+	 */
+	public SearchDocuments(AuthenticatedUser au, FileCabinet fc, VerticalPanel sdp, SearchComponents sc) {
+		authenticatedUser = au;
+		fileCabinet = fc;
+		searchDocumentsPanel = sdp;
+		searchComponents = sc;
 
-	initializeComponents();
-	assembleComponents();
-
-    }
-
-    /**
-     * METHOD: ON CHANGE
-     * Handles any changes.
-     */
-    @Override
-    public void onChange(ChangeEvent event) {
-
-	if (event.getSource().equals(cabinetTypeInfoList) && cabinetTypeInfoList.getSelectedIndex() > 0) {
-	    String number = null;
-	    String documentType = null;
-	    if (fileCabinet.getCabinetName().equals("Broker Paperwork")) {
-		number = searchComponents.getBrokerList().get(cabinetTypeInfoList.getSelectedIndex() - 1).getRepNumber();
-	    } else if (fileCabinet.getCabinetName().equals("Client Paperwork")) {
-		number = searchComponents.getClientList().get(cabinetTypeInfoList.getSelectedIndex() - 1).getAccountNumber();
-	    }
-
-	    if (documentTypeList.getSelectedIndex() > 0) {
-		documentType = searchComponents.getDocumentTypeList().get(documentTypeList.getSelectedIndex() - 1).getDocumentTypeAbbr();
-	    }
-
-	    submitSearchQuery(number, documentType);
+		initializeComponents();
+		assembleComponents();
 
 	}
 
-	if (event.getSource().equals(documentTypeList) && documentTypeList.getSelectedIndex() > 0) {
-	    String number = null;
-	    String documentType = null;
+	/**
+	 * METHOD: ON CHANGE
+	 * Handles any changes.
+	 */
+	@Override
+	public void onChange(ChangeEvent event) {
 
-	    documentType = searchComponents.getDocumentTypeList().get(documentTypeList.getSelectedIndex() - 1).getDocumentTypeAbbr();
+		if (event.getSource().equals(cabinetTypeInfoList) && cabinetTypeInfoList.getSelectedIndex() > 0) {
+			String number = null;
+			String documentType = null;
+			if (fileCabinet.getCabinetName().equals("Broker Paperwork")) {
+				number = searchComponents.getBrokerList().get(cabinetTypeInfoList.getSelectedIndex() - 1).getRepNumber();
+			} else if (fileCabinet.getCabinetName().equals("Client Paperwork")) {
+				number = searchComponents.getClientList().get(cabinetTypeInfoList.getSelectedIndex() - 1).getAccountNumber();
+			}
 
-	    if (cabinetTypeInfoList.getSelectedIndex() > 0) {
-		if (fileCabinet.getCabinetName().equals("Broker Paperwork")) {
-		    number = searchComponents.getBrokerList().get(cabinetTypeInfoList.getSelectedIndex() - 1).getRepNumber();
-		} else if (fileCabinet.getCabinetName().equals("Client Paperwork")) {
-		    number = searchComponents.getClientList().get(cabinetTypeInfoList.getSelectedIndex() - 1).getAccountNumber();
+			if (documentTypeList.getSelectedIndex() > 0) {
+				documentType = searchComponents.getDocumentTypeList().get(documentTypeList.getSelectedIndex() - 1).getDocumentTypeAbbr();
+			}
+
+			submitSearchQuery(number, documentType);
+
 		}
-	    }
 
-	    submitSearchQuery(number, documentType);
+		if (event.getSource().equals(documentTypeList) && documentTypeList.getSelectedIndex() > 0) {
+			String number = null;
+			String documentType = null;
+
+			documentType = searchComponents.getDocumentTypeList().get(documentTypeList.getSelectedIndex() - 1).getDocumentTypeAbbr();
+
+			if (cabinetTypeInfoList.getSelectedIndex() > 0) {
+				if (fileCabinet.getCabinetName().equals("Broker Paperwork")) {
+					number = searchComponents.getBrokerList().get(cabinetTypeInfoList.getSelectedIndex() - 1).getRepNumber();
+				} else if (fileCabinet.getCabinetName().equals("Client Paperwork")) {
+					number = searchComponents.getClientList().get(cabinetTypeInfoList.getSelectedIndex() - 1).getAccountNumber();
+				}
+			}
+
+			submitSearchQuery(number, documentType);
+		}
+
 	}
 
-    }
+	/**
+	 * METHOD: ASSEMBLE COMPONENTS
+	 * Assemble initial view components
+	 */
+	private void assembleComponents() {
 
-    /**
-     * METHOD: ASSEMBLE COMPONENTS
-     * Assemble initial view components
-     */
-    private void assembleComponents() {
+		int row = 0;
 
-	int row = 0;
-	
-	//TODO Livesearch
-//	searchOracle.add("Cat");
-//	searchOracle.add("Dog");
-//	searchOracle.add("Horse");
-//	searchOracle.add("Canary");
-//	searchComponentsTable.setWidget(row, 0, new Label("Quick Search:"));
-//	searchComponentsTable.setWidget(row, 1, quickSearchSuggestbox);
-//	++row;
+		//TODO Livesearch
+		//	searchOracle.add("Cat");
+		//	searchOracle.add("Dog");
+		//	searchOracle.add("Horse");
+		//	searchOracle.add("Canary");
+		//	searchComponentsTable.setWidget(row, 0, new Label("Quick Search:"));
+		//	searchComponentsTable.setWidget(row, 1, quickSearchSuggestbox);
+		//	++row;
 
-	searchComponentsTable.setWidget(row, 0, cabinetTypeInfoList);
-	//searchComponentsTable.setWidget(row, 1, documentTypeList);
-	searchComponentsTable.setWidget(row, 1, documentTypeList);
+		searchComponentsTable.setWidget(row, 0, cabinetTypeInfoList);
+		//searchComponentsTable.setWidget(row, 1, documentTypeList);
+		searchComponentsTable.setWidget(row, 1, documentTypeList);
 
-	// Test cabinet type.
-	if (fileCabinet.getCabinetName().equals("Broker Paperwork")) {
-	    // Build Listboxes.
-	    cabinetTypeInfoList.addItem("Search by Broker Info");
-	    for (Broker brokerInfo : searchComponents.getBrokerList()) {
-		cabinetTypeInfoList.addItem(brokerInfo.getBrokerFullInfo());
-	    }
-	} else if (fileCabinet.getCabinetName().equals("Client Paperwork")) {
-	    // Build Listboxes.
-	    cabinetTypeInfoList.addItem("Search by Client Info");
-	    for (Client clientInfo : searchComponents.getClientList()) {
-		cabinetTypeInfoList.addItem(clientInfo.getClientFullInfo());
-	    }
-	} else {
-	    cabinetTypeInfoList.addItem("Cabinet not loaded!");
-	}
-	cabinetTypeInfoList.addChangeHandler(this);
+		// Test cabinet type.
+		if (fileCabinet.getCabinetName().equals("Broker Paperwork")) {
+			// Build Listboxes.
+			cabinetTypeInfoList.addItem("Search by Broker Info");
+			for (Broker brokerInfo : searchComponents.getBrokerList()) {
+				cabinetTypeInfoList.addItem(brokerInfo.getBrokerFullInfo());
+			}
+		} else if (fileCabinet.getCabinetName().equals("Client Paperwork")) {
+			// Build Listboxes.
+			cabinetTypeInfoList.addItem("Search by Client Info");
+			for (Client clientInfo : searchComponents.getClientList()) {
+				cabinetTypeInfoList.addItem(clientInfo.getClientFullInfo());
+			}
+		} else {
+			cabinetTypeInfoList.addItem("Cabinet not loaded!");
+		}
+		cabinetTypeInfoList.addChangeHandler(this);
 
-	documentTypeList.addItem("Search by Document Type");
-	for (DocumentType documentTypeInfo : searchComponents.getDocumentTypeList()) {
-	    documentTypeList.addItem(documentTypeInfo.getDocumentTypeFullInfo());
-	}
-	documentTypeList.addChangeHandler(this);
-	++row;
+		documentTypeList.addItem("Search by Document Type");
+		for (DocumentType documentTypeInfo : searchComponents.getDocumentTypeList()) {
+			documentTypeList.addItem(documentTypeInfo.getDocumentTypeFullInfo());
+		}
+		documentTypeList.addChangeHandler(this);
+		++row;
 
-	searchDocumentsPanel.add(searchComponentsTable);
+		searchDocumentsPanel.add(searchComponentsTable);
 
-    }
-
-    /**
-     * METHOD: DISPLAY SEARCH RESULTS
-     * Clear table from previous search, display new results.
-     */
-    private void displaySearchResults() {
-
-	searchResultsTable.removeAllRows();
-
-	String numberTypeText = new String();
-	String cabinetType = new String();
-	if (fileCabinet.getCabinetName().equals("Broker Paperwork")) {
-	    numberTypeText = "Broker";
-	    cabinetType = "broker";
-	} else if (fileCabinet.getCabinetName().equals("Client Paperwork")) {
-	    numberTypeText = "Client";
-	    cabinetType = "client";
 	}
 
-	int row = 0;
-	searchResultsTable.setText(row, 0, numberTypeText + "#");
-	searchResultsTable.setText(row, 1, "Document Type");
-	searchResultsTable.setText(row, 2, "File Name");
-	searchResultsTable.setText(row, 3, "Upload Date");
-	++row;
+	/**
+	 * METHOD: DISPLAY SEARCH RESULTS
+	 * Clear table from previous search, display new results.
+	 */
+	private void displaySearchResults() {
 
-	for (ScannedDocument scannedDocument : scannedDocuments) {
-	    String link = GWT.getModuleBaseURL() + "filedownload?user="+authenticatedUser.getUsername()+"&cabinet=" + cabinetType + "&uploadID=" + scannedDocument.getUploadID(); 
-	    HTML pdfFileName = new HTML();
-	    String htmlString = "<a href='" + link + "'><img src='" + GWT.getHostPageBaseURL() + "images/pdfImage.gif' width='20px' height='20px' align='center' border='0'>" + scannedDocument.getFileName() + "</a>";
-	    pdfFileName.setHTML(htmlString);
+		searchResultsTable.removeAllRows();
 
-	    searchResultsTable.setText(row, 0, scannedDocument.getGroupedBy());
-	    searchResultsTable.setText(row, 1, scannedDocument.getDocumentTypeAbbr());
-	    searchResultsTable.setWidget(row, 2, pdfFileName);
-	    searchResultsTable.setText(row, 3, scannedDocument.getUploadDate());
+		String numberTypeText = new String();
+		String cabinetType = new String();
+		if (fileCabinet.getCabinetName().equals("Broker Paperwork")) {
+			numberTypeText = "Broker";
+			cabinetType = "broker";
+		} else if (fileCabinet.getCabinetName().equals("Client Paperwork")) {
+			numberTypeText = "Client";
+			cabinetType = "client";
+		}
 
-	    searchResultsTable.getCellFormatter().setStyleName(row, 2, "link-element");
-	    ++row;
+		int row = 0;
+		searchResultsTable.setText(row, 0, numberTypeText + " Info");
+		searchResultsTable.setText(row, 1, "Document Type");
+		searchResultsTable.setText(row, 2, "File Name");
+		searchResultsTable.setText(row, 3, "Upload Date");
+		++row;
+
+		for (ScannedDocument scannedDocument : scannedDocuments) {
+			String link = GWT.getModuleBaseURL() + "filedownload?user="+authenticatedUser.getUsername()+"&cabinet=" + cabinetType + "&uploadID=" + scannedDocument.getUploadID(); 
+			HTML pdfFileName = new HTML();
+			String htmlString = "<a href='" + link + "'><img src='" + GWT.getHostPageBaseURL() + "images/pdfImage.gif' width='20px' height='20px' align='center' border='0'>" + scannedDocument.getFileName() + "</a>";
+			pdfFileName.setHTML(htmlString);
+
+			if (fileCabinet.getCabinetName().equals("Broker Paperwork")) {
+				searchResultsTable.setText(row, 0, searchComponents.returnBrokerByRepNumber(scannedDocument.getGroupedBy()).getBrokerFullInfo());
+			} else if (fileCabinet.getCabinetName().equals("Client Paperwork")) {
+				searchResultsTable.setText(row, 0, searchComponents.returnClientByAccountNumber(scannedDocument.getGroupedBy()).getClientFullInfo());
+			}
+			searchResultsTable.setText(row, 1, scannedDocument.getDocumentTypeAbbr());
+			searchResultsTable.setWidget(row, 2, pdfFileName);
+			searchResultsTable.setText(row, 3, scannedDocument.getUploadDate());
+
+			searchResultsTable.getCellFormatter().setStyleName(row, 2, "link-element");
+			++row;
+		}
+
+		searchDocumentsPanel.add(searchResultsTable);
 	}
 
-	searchDocumentsPanel.add(searchResultsTable);
-    }
+	/**
+	 * METHOD: INITIALIZE COMPONENTS
+	 * Initialize initial components
+	 */
+	private void initializeComponents() {
 
-    /**
-     * METHOD: INITIALIZE COMPONENTS
-     * Initialize initial components
-     */
-    private void initializeComponents() {
+		// Define the service to call  
+		fileCabinetAsync = (FileCabinetServiceAsync) GWT.create(FileCabinetService.class);    
 
-	// Define the service to call  
-	fileCabinetAsync = (FileCabinetServiceAsync) GWT.create(FileCabinetService.class);    
+		// Initialize RPC handler
+		searchResultsHandler = new SearchResultsHandler();
 
-	// Initialize RPC handler
-	searchResultsHandler = new SearchResultsHandler();
+		searchComponentsTable = new FlexTable();
+		searchOracle = new MultiWordSuggestOracle();
+		quickSearchSuggestbox = new SuggestBox(searchOracle);
+		quickSearchTextbox = new TextBox();
+		cabinetTypeInfoList = new ListBox();
+		documentTypeList = new ListBox();
+		searchResultsTable = new FlexTable();
 
-	searchComponentsTable = new FlexTable();
-	searchOracle = new MultiWordSuggestOracle();
-	quickSearchSuggestbox = new SuggestBox(searchOracle);
-	quickSearchTextbox = new TextBox();
-	cabinetTypeInfoList = new ListBox();
-	documentTypeList = new ListBox();
-	searchResultsTable = new FlexTable();
-
-    }
-
-
-    /**
-     * METHOD: SUBMIT SEARCH QUERY
-     * @param number
-     * @param documentType
-     * Display Loading Dialog, clear ScannedDocuments from previous search, call retrieveSearchResults().
-     */
-    private void submitSearchQuery(String number, String documentType) {
-	idb = new InformationDialogBox();
-	idb.loadingDialogBox("Loading Search Results");
-
-	// Empty last searchs results.
-	if (scannedDocuments != null) {
-	    scannedDocuments.clear();
 	}
 
-	// Execute procedure
-	fileCabinetAsync.retrieveSearchResults(fileCabinet, number, documentType, searchResultsHandler);
-    }
 
-    /**
-     * PRIVATE CLASS: SEARCH RESULTS HANDLER
-     * @author mweppler
-     * GWT AsyncCallback
-     */
-    private class SearchResultsHandler implements AsyncCallback<ArrayList<ScannedDocument>> {
+	/**
+	 * METHOD: SUBMIT SEARCH QUERY
+	 * @param number
+	 * @param documentType
+	 * Display Loading Dialog, clear ScannedDocuments from previous search, call retrieveSearchResults().
+	 */
+	private void submitSearchQuery(String number, String documentType) {
+		idb = new InformationDialogBox();
+		idb.loadingDialogBox("Loading Search Results");
 
-	@Override
-	public void onFailure(Throwable caught) {
-	    idb.destroyTimer();
-	    idb.messageDialogBox(0, "RPC Failure" , "Load Search Results RPC Failure");
+		// Empty last searchs results.
+		if (scannedDocuments != null) {
+			scannedDocuments.clear();
+		}
+
+		// Execute procedure
+		fileCabinetAsync.retrieveSearchResults(fileCabinet, number, documentType, searchResultsHandler);
 	}
 
-	@Override
-	public void onSuccess(ArrayList<ScannedDocument> sd) {
-	    scannedDocuments = sd;
-	    displaySearchResults();
-	    idb.destroyTimer();
-	}
+	/**
+	 * PRIVATE CLASS: SEARCH RESULTS HANDLER
+	 * @author mweppler
+	 * GWT AsyncCallback
+	 */
+	private class SearchResultsHandler implements AsyncCallback<ArrayList<ScannedDocument>> {
 
-    }
+		@Override
+		public void onFailure(Throwable caught) {
+			idb.destroyTimer();
+			idb.messageDialogBox(0, "RPC Failure" , "Load Search Results RPC Failure");
+		}
+
+		@Override
+		public void onSuccess(ArrayList<ScannedDocument> sd) {
+			scannedDocuments = sd;
+			displaySearchResults();
+			idb.destroyTimer();
+		}
+
+	}
 
 }

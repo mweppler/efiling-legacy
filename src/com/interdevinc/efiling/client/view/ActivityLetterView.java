@@ -241,11 +241,7 @@ public class ActivityLetterView implements ChangeHandler, ClickHandler {
 		if (activityLetterClients!=null) {
 			updateActivityLetterListbox.addItem("Select a Client");
 			for (ActivityLetter alc : activityLetterClients) {
-				for (Client clientInfo : searchComponents.getClientList()) {
-					if (clientInfo.getAccountNumber().equals(alc.getAccountNumber())) {
-						updateActivityLetterListbox.addItem(clientInfo.getClientFullInfo() + " | " + alc.getDateSentFormattedString());
-					}
-				} 
+				updateActivityLetterListbox.addItem(searchComponents.returnClientByAccountNumber(alc.getAccountNumber()).getClientFullInfo() + " | " + alc.getDateSentFormattedString());
 			}
 		} else {
 			updateActivityLetterListbox.addItem("No open Activity Letters.");
