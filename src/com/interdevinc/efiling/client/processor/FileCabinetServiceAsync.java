@@ -24,4 +24,6 @@ public interface FileCabinetServiceAsync {
     
     public void editDocumentType(AuthenticatedUser au, FileCabinet fc, String documentTypeName, String documentTypeAbbr, String documentTypeAbbrOld, AsyncCallback<String> callback);
     
+	public void disassociateDocument(AuthenticatedUser au, FileCabinet fc, ScannedDocument sd, AsyncCallback<String> callback);
+	
 }

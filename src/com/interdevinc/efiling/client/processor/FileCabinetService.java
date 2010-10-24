@@ -11,19 +11,21 @@ import com.interdevinc.efiling.client.model.SearchComponents;
 
 @RemoteServiceRelativePath("filecabinet")
 public interface FileCabinetService extends RemoteService {
-    
-    public ArrayList<FileCabinet> retrieveUsableFileCabinets(AuthenticatedUser au);
-    
-    public FileCabinet retrieveFileCabinetContents(FileCabinet fc);
-    
-    public SearchComponents retrieveSearchComponents(FileCabinet fc);
-    
-    public ArrayList<ScannedDocument> retrieveSearchResults(FileCabinet fc, String n, String d);
-    
-    public String addDocumentType(AuthenticatedUser au, FileCabinet fc, String documentTypeName, String documentTypeAbbr);
-    
-    public String deleteDocumentType(AuthenticatedUser au, FileCabinet fc, String documentTypeAbbr);
-    
-    public String editDocumentType(AuthenticatedUser au, FileCabinet fc, String documentTypeName, String documentTypeAbbr, String documentTypeAbbrOld);
-    
+
+	public ArrayList<FileCabinet> retrieveUsableFileCabinets(AuthenticatedUser au);
+
+	public FileCabinet retrieveFileCabinetContents(FileCabinet fc);
+
+	public SearchComponents retrieveSearchComponents(FileCabinet fc);
+
+	public ArrayList<ScannedDocument> retrieveSearchResults(FileCabinet fc, String n, String d);
+
+	public String addDocumentType(AuthenticatedUser au, FileCabinet fc, String documentTypeName, String documentTypeAbbr);
+
+	public String deleteDocumentType(AuthenticatedUser au, FileCabinet fc, String documentTypeAbbr);
+
+	public String editDocumentType(AuthenticatedUser au, FileCabinet fc, String documentTypeName, String documentTypeAbbr, String documentTypeAbbrOld);
+
+	public String disassociateDocument(AuthenticatedUser au, FileCabinet fc, ScannedDocument sd);
+	
 }

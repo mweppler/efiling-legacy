@@ -5,15 +5,19 @@ import java.util.ArrayList;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.interdevinc.efiling.client.model.AuthenticatedUser;
 import com.interdevinc.efiling.client.model.Broker;
 import com.interdevinc.efiling.client.model.Client;
@@ -46,6 +50,7 @@ public class SearchDocuments implements ChangeHandler {
 	private ArrayList<ScannedDocument> scannedDocuments;
 
 	private FileCabinetServiceAsync fileCabinetAsync; 
+	private DisassociateDocumentHandler disassociateDocumentHandler;
 	private SearchResultsHandler searchResultsHandler;
 
 	/**
@@ -167,43 +172,61 @@ public class SearchDocuments implements ChangeHandler {
 
 		searchResultsTable.removeAllRows();
 
-		String numberTypeText = new String();
-		String cabinetType = new String();
-		if (fileCabinet.getCabinetName().equals("Broker Paperwork")) {
-			numberTypeText = "Broker";
-			cabinetType = "broker";
-		} else if (fileCabinet.getCabinetName().equals("Client Paperwork")) {
-			numberTypeText = "Client";
-			cabinetType = "client";
-		}
-
-		int row = 0;
-		searchResultsTable.setText(row, 0, numberTypeText + " Info");
-		searchResultsTable.setText(row, 1, "Document Type");
-		searchResultsTable.setText(row, 2, "File Name");
-		searchResultsTable.setText(row, 3, "Upload Date");
-		++row;
-
-		for (ScannedDocument scannedDocument : scannedDocuments) {
-			String link = GWT.getModuleBaseURL() + "filedownload?user="+authenticatedUser.getUsername()+"&cabinet=" + cabinetType + "&uploadID=" + scannedDocument.getUploadID(); 
-			HTML pdfFileName = new HTML();
-			String htmlString = "<a href='" + link + "'><img src='" + GWT.getHostPageBaseURL() + "images/pdfImage.gif' width='20px' height='20px' align='center' border='0'>" + scannedDocument.getFileName() + "</a>";
-			pdfFileName.setHTML(htmlString);
-
+		if (scannedDocuments.size() > 0) {
+			String numberTypeText = new String();
+			String cabinetType = new String();
 			if (fileCabinet.getCabinetName().equals("Broker Paperwork")) {
-				searchResultsTable.setText(row, 0, searchComponents.returnBrokerByRepNumber(scannedDocument.getGroupedBy()).getBrokerFullInfo());
+				numberTypeText = "Broker";
+				cabinetType = "broker";
 			} else if (fileCabinet.getCabinetName().equals("Client Paperwork")) {
-				searchResultsTable.setText(row, 0, searchComponents.returnClientByAccountNumber(scannedDocument.getGroupedBy()).getClientFullInfo());
+				numberTypeText = "Client";
+				cabinetType = "client";
 			}
-			searchResultsTable.setText(row, 1, scannedDocument.getDocumentTypeAbbr());
-			searchResultsTable.setWidget(row, 2, pdfFileName);
-			searchResultsTable.setText(row, 3, scannedDocument.getUploadDate());
 
-			searchResultsTable.getCellFormatter().setStyleName(row, 2, "link-element");
+			int row = 0;
+			searchResultsTable.setText(row, 0, numberTypeText + " Info");
+			searchResultsTable.setText(row, 1, "Document Type");
+			searchResultsTable.setText(row, 2, "File Name");
+			searchResultsTable.setText(row, 3, "Upload Date");
 			++row;
-		}
 
-		searchDocumentsPanel.add(searchResultsTable);
+			for (final ScannedDocument scannedDocument : scannedDocuments) {
+				String link = GWT.getModuleBaseURL() + "filedownload?user="+authenticatedUser.getUsername()+"&cabinet=" + cabinetType + "&uploadID=" + scannedDocument.getUploadID(); 
+				HTML pdfFileName = new HTML();
+				String htmlString = "<a href='" + link + "'><img src='" + GWT.getHostPageBaseURL() + "images/pdfImage.gif' width='20px' height='20px' align='center' border='0'>" + scannedDocument.getFileName() + "</a>";
+				pdfFileName.setHTML(htmlString);
+				Button disButton = new Button("Disassociate");
+				if (fileCabinet.getCabinetName().equals("Broker Paperwork")) {
+					searchResultsTable.setText(row, 0, searchComponents.returnBrokerByRepNumber(scannedDocument.getGroupedBy()).getBrokerFullInfo());
+				} else if (fileCabinet.getCabinetName().equals("Client Paperwork")) {
+					searchResultsTable.setText(row, 0, searchComponents.returnClientByAccountNumber(scannedDocument.getGroupedBy()).getClientFullInfo());
+				}
+				searchResultsTable.setText(row, 1, scannedDocument.getDocumentTypeAbbr());
+				searchResultsTable.setWidget(row, 2, pdfFileName);
+				searchResultsTable.setText(row, 3, scannedDocument.getUploadDate());
+				searchResultsTable.setWidget(row, 4, disButton);
+				disButton.addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						if (Window.confirm(scannedDocument.getFileName() + " - Are you sure you want to Disassociate this Document? This cannot be undone!")) {
+							idb = new InformationDialogBox();
+							idb.loadingDialogBox("Disassociating Document");
+							// Execute procedure
+							fileCabinetAsync.disassociateDocument(authenticatedUser, fileCabinet, scannedDocument, disassociateDocumentHandler);
+						} else {
+							Window.alert("phew... That was close...");
+						}
+					}
+				});
+
+				searchResultsTable.getCellFormatter().setStyleName(row, 2, "link-element");
+				++row;
+			}
+			searchResultsTable.setStyleName("document-search-results-table");
+			searchDocumentsPanel.add(searchResultsTable);
+		} else {
+			Window.alert("No Associated Documents.");
+		}
 	}
 
 	/**
@@ -216,6 +239,7 @@ public class SearchDocuments implements ChangeHandler {
 		fileCabinetAsync = (FileCabinetServiceAsync) GWT.create(FileCabinetService.class);    
 
 		// Initialize RPC handler
+		disassociateDocumentHandler = new DisassociateDocumentHandler();
 		searchResultsHandler = new SearchResultsHandler();
 
 		searchComponentsTable = new FlexTable();
@@ -227,7 +251,6 @@ public class SearchDocuments implements ChangeHandler {
 		searchResultsTable = new FlexTable();
 
 	}
-
 
 	/**
 	 * METHOD: SUBMIT SEARCH QUERY
@@ -246,6 +269,30 @@ public class SearchDocuments implements ChangeHandler {
 
 		// Execute procedure
 		fileCabinetAsync.retrieveSearchResults(fileCabinet, number, documentType, searchResultsHandler);
+	}
+
+	/**
+	 * PRIVATE CLASS: DISASSOCIATE DOCUMENT HANDLER
+	 * @author mweppler
+	 * GWT AsyncCallback
+	 */
+	private class DisassociateDocumentHandler implements AsyncCallback<String> {
+
+		@Override
+		public void onFailure(Throwable caught) {
+			idb.destroyTimer();
+			idb.messageDialogBox(0, "RPC Failure" , "Disassociate Document RPC Failure");
+		}
+
+		@Override
+		public void onSuccess(String resultMessage) {
+			searchResultsTable.removeAllRows();
+			cabinetTypeInfoList.setSelectedIndex(0);
+			documentTypeList.setSelectedIndex(0);
+			idb.destroyTimer();
+			Window.alert(resultMessage);
+		}
+
 	}
 
 	/**
