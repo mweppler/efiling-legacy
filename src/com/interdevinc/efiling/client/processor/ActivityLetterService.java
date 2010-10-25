@@ -14,6 +14,10 @@ public interface ActivityLetterService extends RemoteService {
 
     public String addNewActivityLetter(AuthenticatedUser au, String acctNum, String dateSent);
     
+    public ArrayList<ActivityLetter> retrieveActivityLettersPast12(AuthenticatedUser au);
+
+    public ArrayList<ActivityLetter> retrieveActivityLettersPast3(AuthenticatedUser au);
+
     public ArrayList<ActivityLetter> retrieveClientsWithNullUpdates(AuthenticatedUser au);
 
     public ArrayList<ScannedDocument> retrieveScannedActivityLetterForClient(AuthenticatedUser au, String acctNum);

@@ -1,8 +1,6 @@
 /** Add css rules here for your application. */
-.link-element {
-	color: blue;
-	cursor: pointer;
-	text-decoration: underline;
+.activity-letter-results {
+	border: 1px dashed #CAE1FF;
 }
 
 #bug-form {
@@ -15,7 +13,7 @@
     text-decoration: underline;
 }
 
-#document-search-results-table {
+.document-search-results-table {
 	border: 1px dashed #CAE1FF;
 }
 
@@ -23,6 +21,12 @@
     background: none repeat scroll 0 0 #CCCCCC;
     float: right;
     padding: 5px 10px;
+}
+
+.link-element {
+	color: blue;
+	cursor: pointer;
+	text-decoration: underline;
 }
 
 #logout {

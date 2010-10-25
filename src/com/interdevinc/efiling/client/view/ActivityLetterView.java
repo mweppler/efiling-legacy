@@ -17,6 +17,7 @@ import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DateBox;
 import com.interdevinc.efiling.client.model.ActivityLetter;
 import com.interdevinc.efiling.client.model.AuthenticatedUser;
@@ -54,16 +55,20 @@ public class ActivityLetterView implements ChangeHandler, ClickHandler {
 	private NewActivityLetterHandler newActivityLetterHandler;
 
 	// Search Activity Letter Components
+	private ArrayList<ActivityLetter> activityLettersPastHolder;
 	private Grid mainDivderGrid;
 	private VerticalPanel client12MonthPanel;
 	private VerticalPanel client30dayPanel;
+	private VerticalPanel activityLetterResultsPanel;
 	private ListBox clientListbox12Month;
 	private Label resultsLabel;
 	private FlexTable client30dayResultsTable;
 	private Button refresh30DayButton;
 	private ThrityDayNotReturnedActivityLetterHandler thrityDayNotReturnedActivityLetterHandler;
 	private TwelveMonthActivityLetterHandler twelveMonthActivityLetterHandler;
-
+	private ActivityLettersPast12Handler activityLettersPast12Handler;
+	private ActivityLettersPast3Handler activityLettersPast3Handler;
+	
 	// Update Activity Letter Components
 	private ArrayList<ActivityLetter> activityLetterClients;
 	private ListBox updateActivityLetterListbox;
@@ -259,19 +264,40 @@ public class ActivityLetterView implements ChangeHandler, ClickHandler {
 
 		// Search Activity Letter
 		mainTabPanel.add(searchActivityLetterPanel, "Search Activity Letter");
-		clientListbox12Month.addItem("Select a Client");
-		for (Client clientInfo : searchComponents.getClientList()) {
-			clientListbox12Month.addItem(clientInfo.getClientFullInfo());
-		}
-		clientListbox12Month.addChangeHandler(this);
-		refresh30DayButton.addClickHandler(this);
-		client12MonthPanel.add(clientListbox12Month);
-		client12MonthPanel.add(resultsLabel);
-		client30dayPanel.add(refresh30DayButton);
-		client30dayPanel.add(client30dayResultsTable);
-		mainDivderGrid.setWidget(0, 0, client12MonthPanel);
-		mainDivderGrid.setWidget(0, 1, client30dayPanel);
-		searchActivityLetterPanel.add(mainDivderGrid);
+		FlexTable ft = new FlexTable();
+		Button view12 = new Button("View 12");
+		view12.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				activityLetterAsync.retrieveActivityLettersPast12(authenticatedUser, activityLettersPast12Handler);
+			}
+		});
+		Button view3 = new Button("View 3");
+		view3.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				activityLetterAsync.retrieveActivityLettersPast3(authenticatedUser, activityLettersPast3Handler);
+			}
+		});
+		ft.setWidget(0, 0, new Label("View Clients with Activity Letters received in the past 12 months."));
+		ft.setWidget(0, 1, view12);
+		ft.setWidget(1, 0, new Label("View Clients with Activity Letters received in the past 3 months."));
+		ft.setWidget(1, 1, view3);
+		searchActivityLetterPanel.add(ft);
+
+		//		clientListbox12Month.addItem("Select a Client");
+		//		for (Client clientInfo : searchComponents.getClientList()) {
+		//			clientListbox12Month.addItem(clientInfo.getClientFullInfo());
+		//		}
+		//		clientListbox12Month.addChangeHandler(this);
+		//		refresh30DayButton.addClickHandler(this);
+		//		client12MonthPanel.add(clientListbox12Month);
+		//		client12MonthPanel.add(resultsLabel);
+		//		client30dayPanel.add(refresh30DayButton);
+		//		client30dayPanel.add(client30dayResultsTable);
+		//		mainDivderGrid.setWidget(0, 0, client12MonthPanel);
+		//		mainDivderGrid.setWidget(0, 1, client30dayPanel);
+		//		searchActivityLetterPanel.add(mainDivderGrid);
 
 	}
 
@@ -297,6 +323,7 @@ public class ActivityLetterView implements ChangeHandler, ClickHandler {
 
 		// Search Activity Letter
 		searchActivityLetterPanel = new VerticalPanel();
+		activityLetterResultsPanel = new VerticalPanel();
 		mainDivderGrid = new Grid(1, 2);
 		client12MonthPanel = new VerticalPanel();
 		client30dayPanel = new VerticalPanel();
@@ -322,7 +349,8 @@ public class ActivityLetterView implements ChangeHandler, ClickHandler {
 		thrityDayNotReturnedActivityLetterHandler = new ThrityDayNotReturnedActivityLetterHandler();
 		twelveMonthActivityLetterHandler = new TwelveMonthActivityLetterHandler();
 		updateActivityLetterHandler = new UpdateActivityLetterHandler();
-
+		activityLettersPast12Handler = new ActivityLettersPast12Handler();
+		activityLettersPast3Handler = new ActivityLettersPast3Handler();
 	}
 
 	/**
@@ -334,7 +362,7 @@ public class ActivityLetterView implements ChangeHandler, ClickHandler {
 	}
 
 	/**
-	 * LOAD INITIAL COMPONENTS
+	 * METHOD: LOAD INITIAL COMPONENTS
 	 */
 	private void loadInitialComponents() {
 
@@ -359,6 +387,42 @@ public class ActivityLetterView implements ChangeHandler, ClickHandler {
 		} else {
 			scannedDocumentListbox.addItem("No Activity Letter uploaded for selected client");
 		}
+	}
+
+	/**
+	 * METHOD: LOAD SEARCH RESULT LIST
+	 */
+	private void loadSearchResultList() {
+		activityLetterResultsPanel.clear();
+		FlexTable ft = new FlexTable();
+		int row = 0;
+		ft.setText(row, 0, "Client");
+		ft.setText(row, 1, "Date Sent");
+		ft.setText(row, 2, "Date Received");
+		++row;
+		for (ActivityLetter activityLetter: activityLettersPastHolder) {
+			ft.setText(row, 0, activityLetter.getAccountNumber());
+			
+			try {
+				ft.setText(row, 1, activityLetter.getDateSentFormattedString());
+			} catch (NullPointerException npe) {	
+				ft.setText(row, 1, "");
+			}
+			
+			try {
+				ft.setText(row, 2, activityLetter.getDateReceivedFormattedString());
+			} catch (NullPointerException npe) {
+				ft.setText(row, 2, "");
+			}
+			ft.getCellFormatter().setStyleName(row, 0, "activity-letter-results");
+			ft.getCellFormatter().setStyleName(row, 1, "activity-letter-results");
+			ft.getCellFormatter().setStyleName(row, 2, "activity-letter-results");
+			++row;
+		}
+		ft.setStyleName("activity-letter-results");
+		activityLetterResultsPanel.add(ft);
+		searchActivityLetterPanel.add(activityLetterResultsPanel);
+		activityLettersPastHolder.clear();
 	}
 
 	/**
@@ -430,6 +494,38 @@ public class ActivityLetterView implements ChangeHandler, ClickHandler {
 	}
 
 	/**
+	 * PRIVATE CLASS: ACTIVITY LETTERS PAST 12 (MONTHS) HANDLER
+	 * @author mweppler
+	 * GWT AsyncCallback
+	 */
+	private class ActivityLettersPast12Handler implements AsyncCallback<ArrayList<ActivityLetter>> {
+		public void onFailure(Throwable caught) {
+			idb.messageDialogBox(0, "Retrieve Activity Letters Past 12", "RPC Failure.");
+		}
+
+		public void onSuccess(ArrayList<ActivityLetter> alc) {
+			activityLettersPastHolder = alc;
+			loadSearchResultList();
+		}
+	}
+
+	/**
+	 * PRIVATE CLASS: ACTIVITY LETTERS PAST 3 (MONTHS) HANDLER
+	 * @author mweppler
+	 * GWT AsyncCallback
+	 */
+	private class ActivityLettersPast3Handler implements AsyncCallback<ArrayList<ActivityLetter>> {
+		public void onFailure(Throwable caught) {
+			idb.messageDialogBox(0, "Retrieve Activity Letters Past 3", "RPC Failure.");
+		}
+
+		public void onSuccess(ArrayList<ActivityLetter> alc) {
+			activityLettersPastHolder = alc;
+			loadSearchResultList();
+		}
+	}
+
+	/**
 	 * PRIVATE CLASS: NEW ACTIVITY LETTER HANDLER
 	 * @author mweppler
 	 * GWT AsyncCallback
@@ -496,17 +592,14 @@ public class ActivityLetterView implements ChangeHandler, ClickHandler {
 	 * GWT AsyncCallback
 	 */
 	private class TwelveMonthActivityLetterHandler implements AsyncCallback<ActivityLetter> {
-
 		@Override
 		public void onFailure(Throwable caught) {
 			idb.messageDialogBox(0, "Client 12 Month Activity Letter Status", "RPC Failure.");
 		}
-
 		@Override
 		public void onSuccess(ActivityLetter client12MonthActivityLetterStatus) {
 			loadTwelveMonthActivityLetterStatus(client12MonthActivityLetterStatus);
 		}
-
 	}
 
 	/**

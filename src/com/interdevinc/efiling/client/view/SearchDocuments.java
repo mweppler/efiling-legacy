@@ -188,6 +188,10 @@ public class SearchDocuments implements ChangeHandler {
 			searchResultsTable.setText(row, 1, "Document Type");
 			searchResultsTable.setText(row, 2, "File Name");
 			searchResultsTable.setText(row, 3, "Upload Date");
+			searchResultsTable.getCellFormatter().setStyleName(row, 0, "document-search-results-table");
+			searchResultsTable.getCellFormatter().setStyleName(row, 1, "document-search-results-table");
+			searchResultsTable.getCellFormatter().setStyleName(row, 2, "document-search-results-table");
+			searchResultsTable.getCellFormatter().setStyleName(row, 3, "document-search-results-table");
 			++row;
 
 			for (final ScannedDocument scannedDocument : scannedDocuments) {
@@ -218,8 +222,13 @@ public class SearchDocuments implements ChangeHandler {
 						}
 					}
 				});
-
-				searchResultsTable.getCellFormatter().setStyleName(row, 2, "link-element");
+				
+				searchResultsTable.getCellFormatter().setStyleName(row, 0, "document-search-results-table");
+				searchResultsTable.getCellFormatter().setStyleName(row, 1, "document-search-results-table");
+				searchResultsTable.getCellFormatter().setStyleName(row, 2, "document-search-results-table");
+				searchResultsTable.getCellFormatter().addStyleName(row, 2, "link-element");
+				searchResultsTable.getCellFormatter().setStyleName(row, 3, "document-search-results-table");
+				searchResultsTable.getCellFormatter().setStyleName(row, 4, "document-search-results-table");
 				++row;
 			}
 			searchResultsTable.setStyleName("document-search-results-table");

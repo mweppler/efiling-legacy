@@ -11,6 +11,10 @@ public interface ActivityLetterServiceAsync {
 
     public void addNewActivityLetter(AuthenticatedUser au, String acctNum, String dateSent, AsyncCallback<String> callback);
     
+    public void retrieveActivityLettersPast12(AuthenticatedUser au, AsyncCallback<ArrayList<ActivityLetter>> callback);
+ 
+    public void retrieveActivityLettersPast3(AuthenticatedUser au, AsyncCallback<ArrayList<ActivityLetter>> callback);
+
     public void retrieveClientsWithNullUpdates(AuthenticatedUser au, AsyncCallback<ArrayList<ActivityLetter>> callback);
 
     public void retrieveScannedActivityLetterForClient(AuthenticatedUser au, String acctNum, AsyncCallback<ArrayList<ScannedDocument>> callback);
