@@ -267,9 +267,10 @@ public class FileCabinetServiceImpl extends RemoteServiceServlet implements File
 		if (d != null) {
 			where.append("docuType='" + d + "' AND ");
 		}
-		String whereClause = where.substring(0, (where.length() - 4)).toString();
-
-		final String searchQuery = "SELECT uploadId, fileName, ROUND(fileSize/1024), fileType, " + groupedBy + ", docuType, DATE_FORMAT(uploadDate, '%M %e %Y') FROM " + tableName + whereClause + "ORDER BY fileName ASC, uploadDate DESC";
+		String whereClause = where.substring(0, (where.length() - 4)).toString().concat("AND " + groupedBy + "!='DISASSOCIATED' ");
+		String orderClause = "ORDER BY fileName ASC, uploadDate DESC";
+		
+		final String searchQuery = "SELECT uploadId, fileName, ROUND(fileSize/1024), fileType, " + groupedBy + ", docuType, DATE_FORMAT(uploadDate, '%M %e %Y') FROM " + tableName + whereClause + orderClause;
 
 		try{
 
