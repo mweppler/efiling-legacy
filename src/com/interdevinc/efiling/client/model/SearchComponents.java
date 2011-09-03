@@ -54,8 +54,14 @@ public class SearchComponents implements IsSerializable {
 	
 	/**
 	 * METHOD: RETURN CLIENT BY ACCOUNT NUMBER
-	 * @param an
-	 * @return client
+	 * 
+	 * Takes a string object of an account number formatted as ABC-012345, 
+	 * searches through the clientList for an instance that matches the 
+	 * account number and returns that client instance. If no value matches
+	 * returns an empty client instance.
+	 * 
+	 * @param an - The account number formatted as ABC-012345
+	 * @return client - Instance of a Client
 	 */
 	public Client returnClientByAccountNumber(String an) {
 		Client client = null;
@@ -64,7 +70,7 @@ public class SearchComponents implements IsSerializable {
 				client = cl;
 			}
 		}
-		return client;
+		return client!=null ? client : new Client();
 	}
 	
 	/**
